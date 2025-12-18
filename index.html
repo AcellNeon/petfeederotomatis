@@ -5,49 +5,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      font-family: Helvetica;
+      font-family: 'Segoe UI', Helvetica, sans-serif;
       text-align: center;
-      margin-top: 50px;
-      /* Tambahkan background image */
+      margin: 0;
       background-image: url('anjai.jpg'); /* ganti sesuai nama file */
-      background-size: cover;       /* supaya menutupi seluruh layar */
-      background-position: center;  /* posisi tengah */
-      background-repeat: no-repeat; /* tidak diulang */
-      height: 100vh;                /* tinggi penuh layar */
-      color: white;                 /* teks jadi putih agar kontras */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
     }
-    input {
-      padding: 10px;
-      margin: 5px;
-      width: 120px;
+
+    /* Overlay gelap agar teks lebih jelas */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      z-index: -1;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      width: 300px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    }
+
+    h2 {
+      margin-bottom: 15px;
       font-size: 20px;
-      text-align: center;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
     }
-    button {
-      padding: 10px 20px;
-      margin: 5px;
+
+    input {
+      padding: 12px;
+      margin: 8px 0;
+      width: 80%;
       font-size: 18px;
-      cursor: pointer;
+      text-align: center;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      background: rgba(255,255,255,0.2);
+      color: white;
     }
-    h1, h2 {
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.7); /* biar teks lebih jelas di atas foto */
+
+    input::placeholder {
+      color: #ddd;
+    }
+
+    button {
+      padding: 12px 25px;
+      margin-top: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #ff8080;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
     }
   </style>
 </head>
 <body>
-  <h1>Automatic Pet Feeder</h1>
+  <div class="container">
+    <h1>Automatic Pet Feeder</h1>
 
-  <div id="setPinDiv">
-    <h2>Buat PIN Baru</h2>
-    <input type="password" id="newPin" maxlength="4" placeholder="****"><br>
-    <button onclick="setPin()">Simpan PIN</button>
-  </div>
+    <div id="setPinDiv">
+      <h2>Buat PIN Baru</h2>
+      <input type="password" id="newPin" maxlength="4" placeholder="****"><br>
+      <button onclick="setPin()">Simpan PIN</button>
+    </div>
 
-  <div id="loginDiv" style="display:none;">
-    <h2>Login dengan PIN</h2>
-    <input type="password" id="pin" maxlength="4" placeholder="****"><br>
-    <button onclick="checkPin()">Login</button>
-    <p id="status"></p>
+    <div id="loginDiv" style="display:none;">
+      <h2>Login dengan PIN</h2>
+      <input type="password" id="pin" maxlength="4" placeholder="****"><br>
+      <button onclick="checkPin()">Login</button>
+      <p id="status"></p>
+    </div>
   </div>
 
   <script>
@@ -73,7 +139,6 @@
       }
     }
 
-    //checkpin
     if (localStorage.getItem("userPIN")) {
       document.getElementById("setPinDiv").style.display = "none";
       document.getElementById("loginDiv").style.display = "block";
