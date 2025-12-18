@@ -25,7 +25,7 @@
       text-align: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
       animation: fadeIn 1s ease-in-out;
-      transition: background 0.5s ease, color 0.5s ease; /* smooth transition */
+      transition: background 0.5s ease, color 0.5s ease;
     }
 
     h1 {
@@ -33,7 +33,7 @@
       font-size: 24px;
       color: white;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
-      transition: color 0.5s ease; /* smooth transition */
+      transition: color 0.5s ease;
     }
 
     .action-btn {
@@ -137,6 +137,17 @@
       color: black;
     }
 
+    /* Terminal style box */
+    .terminal-box {
+      background: #111;
+      color: #0f0;
+      font-family: monospace;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
     .dark-mode {
       background: #2c3e50 !important;
       color: white !important;
@@ -157,6 +168,15 @@
   <div class="settings-box" id="settingsBox">
     <button class="dark-btn" onclick="setDarkMode()">Dark Mode</button>
     <button class="light-btn" onclick="setLightMode()">Light Mode</button>
+    <!-- Terminal style text -->
+    <div class="terminal-box">
+      Nama Kelompok:<br>
+      1. Muhammad Zaky Arrafi<br>
+      2. Gregorius Yura Lorenzo Saputra<br>
+      3. Ladya Mareta Syafarani<br>
+      4. Asipattra Surya Andika<br>
+      5. Muhammad Farhan Al Faiz
+    </div>
   </div>
 
   <div class="login-card">
