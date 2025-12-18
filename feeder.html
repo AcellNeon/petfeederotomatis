@@ -33,7 +33,7 @@
     }
 
     /* Gradient button */
-    button {
+    .action-btn {
       padding: 15px 30px;
       font-size: 18px;
       border: none;
@@ -45,7 +45,27 @@
       margin: 8px 0;
     }
 
-    button:hover {
+    .action-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    /* Tombol logout di pojok kanan atas */
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #e74c3c; /* merah */
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .logout-btn:hover {
       transform: scale(1.05);
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
@@ -63,10 +83,12 @@
   </style>
 </head>
 <body>
+  <!-- Tombol logout di pojok kanan atas -->
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
   <div class="login-card">
     <h1>Kontrol Servo</h1>
-    <button onclick="sendCommand()">Kasih Makan</button>
-    <button onclick="logout()">Logout</button>
+    <button class="action-btn" onclick="sendCommand()">Kasih Makan</button>
     <p id="status"></p>
   </div>
 
@@ -89,9 +111,7 @@
     }
 
     function logout() {
-      // Jika ada data login tersimpan, hapus
       localStorage.removeItem("userPIN");
-      // Arahkan ke halaman login
       window.location.href = "index.html";
     }
   </script>
