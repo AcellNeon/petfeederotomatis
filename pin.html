@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login PIN</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Helvetica; text-align: center; margin-top: 50px; }
+    input { padding: 10px; margin: 5px; width: 100px; font-size: 20px; text-align: center; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; font-size: 18px; }
+    p { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Masukkan PIN</h1>
+  <input type="password" id="pin" maxlength="4" placeholder="****"><br>
+  <button onclick="checkPIN()">Login</button>
+  <p id="status"></p>
+
+  <script>
+    const correctPIN = "0000"; // PIN yang kamu tentukan
+
+    function checkPIN() {
+      const pin = document.getElementById("pin").value;
+      if (pin === correctPIN) {
+        window.location.href = "feeder.html"; // redirect ke halaman kontrol servo
+      } else {
+        document.getElementById("status").innerText = "PIN salah!";
+      }
+    }
+  </script>
+</body>
+</html>
