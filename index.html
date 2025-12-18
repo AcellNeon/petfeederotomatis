@@ -1,57 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Set PIN & Login</title>
+  <title>Login PIN</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Helvetica; text-align: center; margin-top: 50px; }
-    input { padding: 10px; margin: 5px; width: 120px; font-size: 20px; text-align: center; }
-    button { padding: 10px 20px; margin: 5px; font-size: 18px; cursor: pointer; }
-  </style>
 </head>
 <body>
-  <h1>Automatic Pet Feeder</h1>
-
-  <div id="setPinDiv">
-    <h2>Buat PIN Baru</h2>
-    <input type="password" id="newPin" maxlength="4" placeholder="****"><br>
-    <button onclick="setPin()">Simpan PIN</button>
-  </div>
-
-  <div id="loginDiv" style="display:none;">
-    <h2>Login dengan PIN</h2>
-    <input type="password" id="pin" maxlength="4" placeholder="****"><br>
-    <button onclick="checkPin()">Login</button>
-    <p id="status"></p>
-  </div>
+  <h1>Masukkan PIN</h1>
+  <input type="password" id="pin" maxlength="4" placeholder="****">
+  <button onclick="checkPIN()">Login</button>
+  <p id="status"></p>
 
   <script>
-    function setPin() {
-      const newPin = document.getElementById("newPin").value;
-      if (newPin.length === 4) {
-        localStorage.setItem("userPIN", newPin);
-        alert("PIN berhasil disimpan!");
-        document.getElementById("setPinDiv").style.display = "none";
-        document.getElementById("loginDiv").style.display = "block";
-      } else {
-        alert("PIN harus 4 digit!");
-      }
-    }
+    const correctPIN = "1234"; // PIN yang kamu tentukan
 
-    function checkPin() {
+    function checkPIN() {
       const pin = document.getElementById("pin").value;
-      const savedPin = localStorage.getItem("userPIN");
-      if (pin === savedPin) {
-        window.location.href = "feeder.html"; // redirect ke halaman kontrol servo
+      if (pin === correctPIN) {
+        // simpan status login
+        localStorage.setItem("isLoggedIn", "true");
+        window.location.href = "feeder.html";
       } else {
         document.getElementById("status").innerText = "PIN salah!";
       }
-    }
-
-    // Jika PIN sudah ada, langsung tampilkan login
-    if (localStorage.getItem("userPIN")) {
-      document.getElementById("setPinDiv").style.display = "none";
-      document.getElementById("loginDiv").style.display = "block";
     }
   </script>
 </body>
