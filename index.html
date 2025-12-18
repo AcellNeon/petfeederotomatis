@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pet Feeder Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Helvetica; text-align: center; margin-top: 50px; }
+    button { padding: 15px 30px; font-size: 20px; margin: 10px; border: none; cursor: pointer; }
+    .run { background: #FF69B4; color: white; }
+    .stop { background: #555; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Kontrol Kasih Makan Kucing</h1>
+  <button class="run" onclick="sendCommand('RUN')">Kasih Makan 🐱</button>
+  <button class="stop" onclick="sendCommand('STOP')">Stop</button>
+
+  <p id="status"></p>
+
+  <script>
+    const apiKey = "09LPP2CN0H8VL1I2";   // ganti dengan API Key TalkBack
+    const talkbackID = "56041";    // ganti dengan TalkBack ID
+
+    function sendCommand(cmd) {
+      const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=${cmd}`;
+      fetch(url, { method: "POST" })
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("status").innerText = "Command sent: " + cmd;
+          console.log(data);
+        })
+        .catch(err => {
+          document.getElementById("status").innerText = "Error sending command";
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+</html>
