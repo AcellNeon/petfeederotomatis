@@ -3,17 +3,18 @@
 <head>
   <title>Automatic Pet Feeder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Helvetica; text-align: center; margin-top: 50px; }
-    button { padding: 20px 40px; font-size: 22px; border: none; cursor: pointer; background: #FF69B4; color: white; border-radius: 8px; }
-  </style>
 </head>
 <body>
   <h1>Kontrol Servo</h1>
-  <button onclick="sendCommand()">Kasih Makan</button>
+  <button onclick="sendCommand()">Kasih Makan 🐱</button>
   <p id="status"></p>
 
   <script>
+    //cekloginnya
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+      window.location.href = "index.html";
+    }
+
     const apiKey = "09LPP2CN0H8VL1I2";   // API Key TalkBack
     const talkbackID = "56041";          // TalkBack ID
 
@@ -22,11 +23,11 @@
       fetch(url, { method: "POST" })
         .then(response => response.text())
         .then(data => {
-          document.getElementById("status").innerText = "Berhasil mengirim perintah";
+          document.getElementById("status").innerText = "Perintah dikirim: Kasih Makan";
           console.log(data);
         })
         .catch(err => {
-          document.getElementById("status").innerText = "Gagal mengirim perintah";
+          document.getElementById("status").innerText = "Error kirim perintah";
           console.error(err);
         });
     }
