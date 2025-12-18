@@ -1,39 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pet Feeder Control</title>
+  <title>Kasih Makan Kucing</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { font-family: Helvetica; text-align: center; margin-top: 50px; }
-    button { padding: 15px 30px; font-size: 20px; margin: 10px; border: none; cursor: pointer; }
-    .run { background: #FF69B4; color: white; }
-    .stop { background: #555; color: white; }
+    button { padding: 20px 40px; font-size: 22px; border: none; cursor: pointer; background: #FF69B4; color: white; border-radius: 8px; }
   </style>
 </head>
 <body>
-  <h1>Kontrol Kasih Makan Kucing</h1>
-  <button class="run" onclick="sendCommand('RUN')">Kasih Makan 🐱</button>
-  <button class="stop" onclick="sendCommand('STOP')">Stop</button>
-
+  <h1>Automatic Pet Feeder</h1>
+  <button onclick="sendCommand()">Kasih Makan</button>
   <p id="status"></p>
 
   <script>
-    const apiKey = "09LPP2CN0H8VL1I2";   // ganti dengan API Key TalkBack
-    const talkbackID = "56041";    // ganti dengan TalkBack ID
+    const apiKey = "09LPP2CN0H8VL1I2";   // API Key TalkBack
+    const talkbackID = "56041";          // TalkBack ID
 
-    function sendCommand(cmd) {
-      const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=${cmd}`;
+    function sendCommand() {
+      const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
       fetch(url, { method: "POST" })
         .then(response => response.text())
         .then(data => {
-          document.getElementById("status").innerText = "Command sent: " + cmd;
+          document.getElementById("status").innerText = "Perintah dikirim: Kasih Makan";
           console.log(data);
         })
         .catch(err => {
-          document.getElementById("status").innerText = "Error sending command";
+          document.getElementById("status").innerText = "Error kirim perintah";
           console.error(err);
         });
     }
   </script>
 </body>
 </html>
+
