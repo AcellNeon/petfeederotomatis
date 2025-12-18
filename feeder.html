@@ -9,11 +9,13 @@
     .servo { background: #FF69B4; color: white; }
     .wifi { background: #007bff; color: white; font-size: 18px; padding: 10px 20px; margin-top: 10px; }
     input { padding: 10px; margin: 5px; width: 200px; }
+    .success { color: green; font-weight: bold; }
+    .error { color: red; font-weight: bold; }
   </style>
 </head>
 <body>
   <h1>Kontrol Servo</h1>
-  <button class="servo" onclick="sendCommand()">Kasih Makan</button>
+  <button class="servo" onclick="sendCommand()">Kasih Makan 🐱</button>
   <p id="status"></p>
 
   <hr>
@@ -27,27 +29,31 @@
   <p id="wifiStatus"></p>
 
   <script>
-    //k.servo
+    // === Kontrol Servo via Thingspeak TalkBack ===
     const apiKey = "09LPP2CN0H8VL1I2";   // API Key TalkBack
     const talkbackID = "56041";          // TalkBack ID
 
     function sendCommand() {
       const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
       fetch(url, { method: "POST" })
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("status").innerText = "Perintah berhasil dikirim";
-          console.log(data);
+        .then(response => {
+          if (response.ok) {
+            document.getElementById("status").innerHTML = "<span class='success'>✅ Perintah berhasil dikirim</span>";
+          } else {
+            document.getElementById("status").innerHTML = "<span class='error'>❌ Perintah gagal dikirim</span>";
+          }
+          return response.text();
         })
+        .then(data => console.log(data))
         .catch(err => {
-          document.getElementById("status").innerText = "Perintah gagal dikirim";
+          document.getElementById("status").innerHTML = "<span class='error'>❌ Perintah gagal dikirim</span>";
           console.error(err);
         });
     }
 
-    //k.wifi
-    const wifiApiKey = "CH45ZU9DICM8ADKF"; // API Key Write
-    const wifiChannelID = "3207696"; // Channel ID
+    // === Update WiFi Settings ke Thingspeak Channel ===
+    const wifiApiKey = "CH45ZU9DICM8ADKF"; // API Key untuk WRITE channel Thingspeak
+    const wifiChannelID = "3207696"; // Channel ID untuk menyimpan SSID & Password
 
     document.getElementById("wifiForm").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -56,13 +62,17 @@
 
       const url = `https://api.thingspeak.com/update?api_key=${wifiApiKey}&field1=${ssid}&field2=${pass}`;
       fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("wifiStatus").innerText = "WiFi settings updated!";
-          console.log(data);
+        .then(response => {
+          if (response.ok) {
+            document.getElementById("wifiStatus").innerHTML = "<span class='success'>✅ WiFi settings updated!</span>";
+          } else {
+            document.getElementById("wifiStatus").innerHTML = "<span class='error'>❌ Error updating WiFi settings</span>";
+          }
+          return response.text();
         })
+        .then(data => console.log(data))
         .catch(err => {
-          document.getElementById("wifiStatus").innerText = "Error updating WiFi settings";
+          document.getElementById("wifiStatus").innerHTML = "<span class='error'>❌ Error updating WiFi settings</span>";
           console.error(err);
         });
     });
