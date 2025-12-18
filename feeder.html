@@ -6,6 +6,8 @@
   <style>
     body { font-family: Helvetica; text-align: center; margin-top: 50px; }
     button { padding: 20px 40px; font-size: 22px; border: none; cursor: pointer; background: #FF69B4; color: white; border-radius: 8px; }
+    input { padding: 10px; margin: 5px; width: 200px; }
+    .wifi { background: #007bff; color: white; border: none; padding: 10px 20px; font-size: 18px; cursor: pointer; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -13,23 +15,11 @@
   <button onclick="sendCommand()">Kasih Makan</button>
   <p id="status"></p>
 
-  <script>
-    const apiKey = "09LPP2CN0H8VL1I2";   // API Key TalkBack
-    const talkbackID = "56041";          // TalkBack ID
-
-    function sendCommand() {
-      const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
-      fetch(url, { method: "POST" })
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("status").innerText = "Perintah berhasil dikirim";
-          console.log(data);
-        })
-        .catch(err => {
-          document.getElementById("status").innerText = "Perintah gagal dikirim";
-          console.error(err);
-        });
-    }
-  </script>
+  <h2>Settings WiFi</h2>
+  <form action="/settings" method="get">
+    SSID: <input type="text" name="ssid" placeholder="Nama WiFi"><br>
+    Password: <input type="text" name="pass" placeholder="Password WiFi"><br>
+    <input type="submit" class="wifi" value="Save & Connect">
+  </form>
 </body>
 </html>
