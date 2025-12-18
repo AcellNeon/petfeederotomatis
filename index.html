@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Login Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -9,13 +9,13 @@
       margin: 0;
       height: 100vh;
       display: flex;
+      flex-direction: column; /* agar footer bisa di bawah */
       justify-content: center;
       align-items: center;
       background: url('anjai.jpg') no-repeat center center/cover;
       color: white;
     }
 
-    /* Overlay gelap agar teks lebih jelas */
     body::before {
       content: "";
       position: absolute;
@@ -50,18 +50,13 @@
       border: none;
       border-radius: 8px;
       outline: none;
-      background: rgba(255,255,255,0.2); /* transparan */
+      background: rgba(255,255,255,0.2);
       color: white;
       transition: background 0.3s;
     }
 
-    input::placeholder {
-      color: #ddd;
-    }
-
-    input:focus {
-      background: rgba(255,255,255,0.3);
-    }
+    input::placeholder { color: #ddd; }
+    input:focus { background: rgba(255,255,255,0.3); }
 
     button {
       padding: 12px 25px;
@@ -70,7 +65,7 @@
       cursor: pointer;
       border: none;
       border-radius: 8px;
-      background: linear-gradient(135deg, #00c6ff, #0072ff); /* gradient */
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
       color: white;
       transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -90,6 +85,23 @@
       from {opacity: 0; transform: translateY(-20px);}
       to {opacity: 1; transform: translateY(0);}
     }
+
+    .link-btn {
+      background: none;
+      color: #ff8080;
+      font-size: 14px;
+      margin-top: 10px;
+      text-decoration: underline;
+      cursor: pointer;
+      border: none;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    }
   </style>
 </head>
 <body>
@@ -107,8 +119,14 @@
       <input type="password" id="pin" maxlength="4" placeholder="****"><br>
       <button onclick="checkPin()">Login</button>
       <p id="status"></p>
+      <button class="link-btn" onclick="forgotPin()">Lupa PIN?</button>
     </div>
   </div>
+
+  <!-- Tambahkan copyright -->
+  <footer>
+    &copy; 2025 Kelompok PRD Imut
+  </footer>
 
   <script>
     function setPin() {
@@ -131,6 +149,13 @@
       } else {
         document.getElementById("status").innerText = "PIN salah!";
       }
+    }
+
+    function forgotPin() {
+      localStorage.removeItem("userPIN");
+      alert("PIN direset. Silakan buat PIN baru.");
+      document.getElementById("loginDiv").style.display = "none";
+      document.getElementById("setPinDiv").style.display = "block";
     }
 
     if (localStorage.getItem("userPIN")) {
