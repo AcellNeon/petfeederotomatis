@@ -13,6 +13,7 @@
       justify-content: center;
       align-items: center;
       background: url('anjai.jpg') no-repeat center center/cover;
+      animation: fadeBg 1.2s ease forwards;
     }
 
     .login-card {
@@ -23,6 +24,9 @@
       width: 340px;
       text-align: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeSlideIn 0.8s ease forwards;
     }
 
     h1 {
@@ -42,6 +46,22 @@
       color: white;
       margin: 8px 0;
       width: 100%;
+      opacity: 0;
+      transform: scale(0.9);
+      animation: popIn 0.6s ease forwards;
+      animation-delay: 0.5s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+    }
+
+    .action-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
 
     #status {
@@ -69,9 +89,14 @@
       cursor: pointer;
       font-size: 12px;
       margin-left: 5px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
     }
     .delete-btn { background: #e74c3c; }
     .edit-btn { background: #3498db; }
+
+    .delete-btn:hover { background: #c0392b; transform: scale(1.05); }
+    .edit-btn:hover { background: #1d6fa5; transform: scale(1.05); }
+    .delete-btn:active, .edit-btn:active { transform: scale(0.95); }
 
     /* Tombol Logout & Settings */
     .logout-btn, .settings-btn {
@@ -84,6 +109,10 @@
       color: white;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s, background 0.5s ease;
+      opacity: 0;
+      transform: scale(0.9);
+      animation: popIn 0.6s ease forwards;
+      animation-delay: 0.7s;
     }
     .logout-btn {
       right: 20px;
@@ -95,7 +124,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      animation-delay: 0.9s;
     }
+
+    .logout-btn:hover { background: #c0392b; transform: scale(1.05); }
+    .settings-btn:hover { background: #2980b9; transform: scale(1.05); }
+    .logout-btn:active, .settings-btn:active { transform: scale(0.95); }
 
     .settings-box {
       position: absolute;
@@ -110,6 +144,29 @@
       gap: 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       max-width: 90%;
+    }
+
+    /* Animasi keluar */
+    @keyframes fadeSlideOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(30px); }
+    }
+    .fade-out {
+      animation: fadeSlideOut 0.6s ease forwards;
+    }
+
+    /* Keyframes masuk */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeBg {
+      from { filter: brightness(0.5); }
+      to { filter: brightness(1); }
     }
 
     @media (max-width: 480px) {
@@ -135,7 +192,7 @@
   </div>
 
   <!-- Kontrol Servo & Jadwal -->
-  <div class="login-card">
+  <div class="login-card" id="card">
     <h1>Kontrol Servo</h1>
     <button class="action-btn" onclick="sendCommand()">Kasih Makan Sekarang</button>
     <p id="status"></p>
@@ -165,7 +222,7 @@
         });
     }
 
-    function addSchedule() {
+        function addSchedule() {
       const time = document.getElementById("feedTime").value;
       if (time && !schedules.includes(time)) {
         schedules.push(time);
@@ -238,7 +295,11 @@
     }, 60000);
 
     function logout() {
-      window.location.href = "index.html";
+      const card = document.getElementById("card");
+      card.classList.add("fade-out");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 600); // sesuai durasi animasi keluar
     }
 
     function toggleSettings() {
@@ -255,6 +316,9 @@
       document.body.style.backgroundColor = "#ecf0f1";
       document.body.style.color = "black";
     }
+
+    // Load jadwal saat halaman dibuka
+    window.onload = loadSchedules;
   </script>
 </body>
 </html>
