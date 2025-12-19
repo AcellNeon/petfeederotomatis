@@ -126,23 +126,6 @@
     .edit-btn { background: #3498db; }
     .delete-btn { background: #e74c3c; }
 
-    /* Settings box */
-    .settings-box {
-      position: fixed;
-      bottom: 80px;
-      left: 270px;
-      background: rgba(0,0,0,0.9);
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      animation: slideIn 0.4s ease forwards;
-    }
-    .settings-box.show { display: flex; }
-
     /* Notification */
     .notification {
       position: fixed;
@@ -167,10 +150,6 @@
       from { filter: brightness(0.5); }
       to { filter: brightness(1); }
     }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
   </style>
 </head>
 <body>
@@ -187,16 +166,9 @@
       <a href="#" onclick="showSection('history')">Riwayat</a>
     </div>
     <div class="bottom">
-      <a href="#" onclick="toggleSettings()"><i class="fas fa-cog"></i> Settings</a>
       <a href="#" onclick="logout()">Logout</a>
       <a href="#" onclick="closeSidebar()"><i class="fas fa-arrow-left"></i> Tutup</a>
     </div>
-  </div>
-
-  <!-- Settings Box -->
-  <div class="settings-box" id="settingsBox">
-    <button onclick="setDarkMode()">Dark Mode</button>
-    <button onclick="setLightMode()">Light Mode</button>
   </div>
 
   <!-- Notification -->
@@ -239,13 +211,11 @@
       document.getElementById("toggleBtn").classList.remove("hidden");
     }
 
-        function showSection(section) {
-      // sembunyikan semua section
+    function showSection(section) {
       document.getElementById("dashboardSection").style.display = "none";
       document.getElementById("scheduleSection").style.display = "none";
       document.getElementById("historySection").style.display = "none";
 
-      // tampilkan section sesuai menu
       if(section === "dashboard") {
         document.getElementById("dashboardSection").style.display = "block";
       }
@@ -255,30 +225,7 @@
       if(section === "history") {
         document.getElementById("historySection").style.display = "block";
       }
-
-      // tutup sidebar setelah klik
       closeSidebar();
-    }
-
-    function toggleSettings() {
-      const box = document.getElementById("settingsBox");
-      box.classList.toggle("show");
-    }
-
-    function setDarkMode() {
-      document.body.style.backgroundColor = "#2c3e50";
-      document.body.style.color = "white";
-      document.querySelectorAll(".login-card").forEach(card => card.style.background = "rgba(0,0,0,0.6)");
-      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "white");
-      document.getElementById("settingsBox").classList.remove("show");
-    }
-
-    function setLightMode() {
-      document.body.style.backgroundColor = "#ecf0f1";
-      document.body.style.color = "black";
-      document.querySelectorAll(".login-card").forEach(card => card.style.background = "rgba(255,255,255,0.8)");
-      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "black");
-      document.getElementById("settingsBox").classList.remove("show");
     }
 
     function showNotification(message, color="#2ecc71") {
@@ -292,10 +239,14 @@
     function sendCommand() {
       const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
       fetch(url, { method: "POST" })
-        .then(response => response.text())
-        .then(() => showNotification("Kasih makan sekarang berhasil!"))
-        .catch(() => showNotification("Perintah gagal dikirim!", "#e74c3c"));
-    }
+      .then(response => response.text())
+      .then(() => {
+        showNotification("Kasih makan sekarang berhasil!");
+    })
+      .catch(() => {
+        showNotification("Perintah gagal dikirim!", "#e74c3c");
+    });
+}
 
     function addSchedule() {
       const time = document.getElementById("feedTime").value;
