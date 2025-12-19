@@ -97,19 +97,34 @@
     }
     .action-btn:hover { transform: scale(1.05); }
 
-    ul { list-style: none; padding: 0; }
-    li {
+    /* Jadwal otomatis */
+    #scheduleList li {
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #1abc9c, #16a085);
+      color: #fff;
+      padding: 10px 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255,255,255,0.2);
-      margin: 5px 0;
-      padding: 5px 10px;
-      border-radius: 6px;
-      color: white;
+      transition: transform 0.2s ease;
     }
-    .delete-btn { background: #e74c3c; }
+    #scheduleList li:hover { transform: scale(1.05); }
+    #scheduleList button {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin-left: 6px;
+      cursor: pointer;
+      border: none;
+      color: #fff;
+    }
     .edit-btn { background: #3498db; }
+    .delete-btn { background: #e74c3c; }
 
     /* Settings box */
     .settings-box {
@@ -174,7 +189,6 @@
     <div class="bottom">
       <a href="#" onclick="toggleSettings()"><i class="fas fa-cog"></i> Settings</a>
       <a href="#" onclick="logout()">Logout</a>
-      <!-- Tombol anak panah untuk menutup sidebar -->
       <a href="#" onclick="closeSidebar()"><i class="fas fa-arrow-left"></i> Tutup</a>
     </div>
   </div>
@@ -228,8 +242,10 @@
     function setDarkMode() {
       document.body.style.backgroundColor = "#2c3e50";
       document.body.style.color = "white";
-      document.querySelector(".login-card").style.background = "rgba(0,0,0,0.6)";
+            document.querySelector(".login-card").style.background = "rgba(0,0,0,0.6)";
       document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "white");
+      // Tutup menu settings otomatis
+      document.getElementById("settingsBox").classList.remove("show");
     }
 
     function setLightMode() {
@@ -237,13 +253,24 @@
       document.body.style.color = "black";
       document.querySelector(".login-card").style.background = "rgba(255,255,255,0.8)";
       document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "black");
+      // Tutup menu settings otomatis
+      document.getElementById("settingsBox").classList.remove("show");
     }
 
     function showNotification(message, color="#2ecc71") {
       const notif = document.getElementById("notification");
-      notif.textContent
-            notif.classList.add("show");
+      notif.textContent = message;
+      notif.style.background = color;
+      notif.classList.add("show");
       setTimeout(() => notif.classList.remove("show"), 3000);
+    }
+
+    function sendCommand() {
+      const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
+      fetch(url, { method: "POST" })
+        .then(response => response.text())
+        .then(() => showNotification("Kasih makan sekarang berhasil!"))
+        .catch(() => showNotification("Perintah gagal dikirim!", "#e74c3c"));
     }
 
     function addSchedule() {
@@ -328,26 +355,9 @@
       }, 600);
     }
 
-    function toggleSettings() {
-      const box = document.getElementById("settingsBox");
-      box.classList.toggle("show");
-    }
-
-    function setDarkMode() {
-      document.body.style.backgroundColor = "#2c3e50";
-      document.body.style.color = "white";
-      document.querySelector(".login-card").style.background = "rgba(0,0,0,0.6)";
-      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "white");
-    }
-
-    function setLightMode() {
-      document.body.style.backgroundColor = "#ecf0f1";
-      document.body.style.color = "black";
-      document.querySelector(".login-card").style.background = "rgba(255,255,255,0.8)";
-      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "black");
-    }
-
     window.onload = loadSchedules;
   </script>
 </body>
 </html>
+
+        
