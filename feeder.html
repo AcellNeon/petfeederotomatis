@@ -67,13 +67,6 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
 
-    #status {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #fff;
-      transition: color 0.5s;
-    }
-
     ul { list-style: none; padding: 0; }
     li {
       display: flex;
@@ -192,14 +185,6 @@
       from { filter: brightness(0.5); }
       to { filter: brightness(1); }
     }
-
-    @media (max-width: 480px) {
-      .login-card { width: 90%; padding: 20px; }
-      h1 { font-size: 20px; }
-      .action-btn { font-size: 14px; }
-      .logout-btn, .settings-btn { font-size: 12px; padding: 8px 12px; }
-      .settings-box { font-size: 12px; left: 10px; right: 10px; }
-    }
   </style>
 </head>
 <body>
@@ -222,7 +207,7 @@
   <div class="login-card" id="card">
     <h1>Kontrol Servo</h1>
     <button class="action-btn" onclick="sendCommand()">Kasih Makan Sekarang</button>
-    <p id="status"></p>
+
     <h2 style="color:white;">Jadwal Otomatis</h2>
     <input type="time" id="feedTime">
     <button class="action-btn" onclick="addSchedule()">Tambah Jadwal</button>
@@ -241,7 +226,7 @@
       notif.classList.add("show");
       setTimeout(() => {
         notif.classList.remove("show");
-      }, 3000);
+            }, 3000);
     }
 
     function sendCommand() {
@@ -249,12 +234,10 @@
       fetch(url, { method: "POST" })
         .then(response => response.text())
         .then(data => {
-          document.getElementById("status").innerText = "Perintah berhasil dikirim";
           showNotification("Kasih makan sekarang berhasil!");
           console.log(data);
         })
         .catch(err => {
-          document.getElementById("status").innerText = "Perintah gagal dikirim";
           showNotification("Perintah gagal dikirim!", "#e74c3c");
           console.error(err);
         });
@@ -266,7 +249,6 @@
         schedules.push(time);
         saveSchedules();
         updateScheduleList();
-        document.getElementById("status").innerText = "Jadwal ditambahkan: " + time;
         showNotification("Jadwal ditambahkan: " + time);
       }
     }
@@ -275,7 +257,6 @@
       schedules.splice(index, 1);
       saveSchedules();
       updateScheduleList();
-      document.getElementById("status").innerText = "Jadwal dihapus";
       showNotification("Jadwal dihapus", "#e67e22");
     }
 
@@ -285,7 +266,6 @@
         schedules[index] = newTime;
         saveSchedules();
         updateScheduleList();
-        document.getElementById("status").innerText = "Jadwal diubah menjadi: " + newTime;
         showNotification("Jadwal diubah: " + newTime);
       } else {
         alert("Format jam salah! Gunakan format HH:MM");
@@ -331,7 +311,6 @@
       const currentTime = now.toTimeString().slice(0,5); // format HH:MM
       if (schedules.includes(currentTime)) {
         sendCommand();
-        document.getElementById("status").innerText = "Kasih makan otomatis pada " + currentTime;
         showNotification("Kasih makan otomatis: " + currentTime);
       }
     }, 60000);
@@ -353,14 +332,14 @@
       document.body.style.backgroundColor = "#2c3e50";
       document.body.style.color = "white";
       document.querySelector(".login-card").style.background = "rgba(0,0,0,0.6)";
-      document.querySelectorAll("h1,h2,#status,li").forEach(el => el.style.color = "white");
+      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "white");
     }
 
     function setLightMode() {
       document.body.style.backgroundColor = "#ecf0f1";
       document.body.style.color = "black";
       document.querySelector(".login-card").style.background = "rgba(255,255,255,0.8)";
-      document.querySelectorAll("h1,h2,#status,li").forEach(el => el.style.color = "black");
+      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "black");
     }
 
     window.onload = loadSchedules;
