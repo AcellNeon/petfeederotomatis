@@ -9,9 +9,8 @@
       font-family: 'Segoe UI', Helvetica, sans-serif;
       margin: 0;
       height: 100vh;
-      background: url('anjaiu.JPG') no-repeat center center/cover;
+      background: url('anjai.jpg') no-repeat center center/cover;
       animation: fadeBg 1.2s ease forwards;
-      transition: background-color 0.5s, color 0.5s;
     }
 
     /* Sidebar */
@@ -101,7 +100,6 @@
     #scheduleList li {
       font-family: 'Courier New', monospace;
       font-size: 18px;
-      letter-spacing: 2px;
       background: linear-gradient(135deg, #1abc9c, #16a085);
       color: #fff;
       padding: 10px 15px;
@@ -111,9 +109,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: transform 0.2s ease;
     }
-    #scheduleList li:hover { transform: scale(1.05); }
     #scheduleList button {
       font-size: 12px;
       padding: 4px 8px;
@@ -235,7 +231,7 @@
         document.getElementById("scheduleSection").style.display = "block";
       }
       if(section === "history") {
-                document.getElementById("historySection").style.display = "block";
+        document.getElementById("historySection").style.display = "block";
       }
       closeSidebar();
     }
@@ -245,13 +241,14 @@
       notif.textContent = message;
       notif.style.background = color;
       notif.classList.add("show");
-      setTimeout(() => notif.classList.remove("show"), 3000);
+            setTimeout(() => notif.classList.remove("show"), 3000);
     }
 
     function addHistory(action) {
       const now = new Date();
       const timestamp = now.toLocaleString();
       history.push(`${timestamp} - ${action}`);
+      saveHistory();
       updateHistoryList();
     }
 
@@ -267,8 +264,21 @@
 
     function clearHistory() {
       history = [];
+      saveHistory();
       updateHistoryList();
       showNotification("Riwayat dibersihkan", "#e67e22");
+    }
+
+    function saveHistory() {
+      localStorage.setItem("feedHistory", JSON.stringify(history));
+    }
+
+    function loadHistory() {
+      const saved = localStorage.getItem("feedHistory");
+      if (saved) {
+        history = JSON.parse(saved);
+        updateHistoryList();
+      }
     }
 
     function sendCommand() {
@@ -371,6 +381,7 @@
 
     window.onload = () => {
       loadSchedules();
+      loadHistory();
       showSection("dashboard"); // default tampilkan dashboard
     };
   </script>
