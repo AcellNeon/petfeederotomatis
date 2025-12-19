@@ -9,7 +9,7 @@
       margin: 0;
       height: 100vh;
       display: flex;
-      flex-direction: column; /* agar footer bisa di bawah */
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       background: url('anjai.jpg') no-repeat center center/cover;
@@ -102,6 +102,17 @@
       color: #ccc;
       text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
     }
+
+    /* 📱 Responsif untuk HP */
+    @media (max-width: 480px) {
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+      h1, h2 { font-size: 20px; }
+      input { width: 100%; font-size: 16px; }
+      button { width: 100%; font-size: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -123,7 +134,6 @@
     </div>
   </div>
 
-  <!-- Tambahkan copyright -->
   <footer>
     &copy; 2025 Kelompok PRD Imut
   </footer>
