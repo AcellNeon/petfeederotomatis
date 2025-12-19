@@ -9,7 +9,7 @@
       font-family: 'Segoe UI', Helvetica, sans-serif;
       margin: 0;
       height: 100vh;
-      background: url('anjaiu.JPG') no-repeat center center/cover;
+      background: url('anjai.jpg') no-repeat center center/cover;
       animation: fadeBg 1.2s ease forwards;
     }
 
@@ -38,7 +38,7 @@
     }
     .sidebar a:hover { background-color: #575757; }
     .sidebar .menu { flex: 1; }
-    .sidebar .bottom { margin-top: auto; }
+    .sidebar .top { margin-bottom: auto; }
 
     /* Toggle button */
     .toggle-btn {
@@ -159,6 +159,9 @@
 
   <!-- Sidebar -->
   <div id="sidebar" class="sidebar">
+    <div class="top">
+      <a href="#" onclick="closeSidebar()"><i class="fas fa-arrow-left"></i></a>
+    </div>
     <div class="menu">
       <a href="#" onclick="showSection('dashboard')">Dashboard</a>
       <a href="#" onclick="showSection('schedule')">Jadwal</a>
@@ -169,14 +172,13 @@
         <i id="gearIcon" class="fas fa-cog"></i> Settings
       </a>
       <a href="#" onclick="logout()">Logout</a>
-      <a href="#" onclick="closeSidebar()"><i class="fas fa-arrow-left"></i> Tutup</a>
     </div>
   </div>
 
   <!-- Settings Box -->
   <div class="settings-box" id="settingsBox">
-    <button class="action-btn">Language</button>
-    <button class="action-btn">Credits</button>
+    <button class="action-btn" onclick="setEnglish()">Language</button>
+    <button class="action-btn" onclick="showCredits()">Credits</button>
   </div>
 
   <!-- Notification -->
@@ -186,23 +188,23 @@
   <div class="main-content">
     <!-- Dashboard Section -->
     <div id="dashboardSection" class="login-card">
-      <h1>Kontrol Servo</h1>
-      <button class="action-btn" onclick="sendCommand()">Kasih Makan Sekarang</button>
+      <h1 id="dashboardTitle">Kontrol Servo</h1>
+      <button id="feedNowBtn" class="action-btn" onclick="sendCommand()">Kasih Makan Sekarang</button>
     </div>
 
     <!-- Jadwal Section -->
     <div id="scheduleSection" class="login-card" style="display:none;">
-      <h2>Jadwal Otomatis</h2>
+      <h2 id="scheduleTitle">Jadwal Otomatis</h2>
       <input type="time" id="feedTime">
-      <button class="action-btn" onclick="addSchedule()">Tambah Jadwal</button>
+      <button id="addScheduleBtn" class="action-btn" onclick="addSchedule()">Tambah Jadwal</button>
       <ul id="scheduleList"></ul>
     </div>
 
     <!-- History Section -->
     <div id="historySection" class="login-card" style="display:none;">
-      <h2>Riwayat</h2>
+      <h2 id="historyTitle">Riwayat</h2>
       <ul id="historyList"></ul>
-      <button class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
+      <button id="clearHistoryBtn" class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
     </div>
   </div>
 
@@ -239,15 +241,40 @@
     }
 
     function toggleSettings() {
-      const box = document.getElementById("settingsBox");
+            const box = document.getElementById("settingsBox");
       const gear = document.getElementById("gearIcon");
       box.classList.toggle("show");
       gear.classList.add("rotate");
       setTimeout(() => gear.classList.remove("rotate"), 600);
     }
 
+    // ====== LANGUAGE SWITCH ======
+    function setEnglish() {
+      // Ubah teks utama ke bahasa Inggris
+      document.getElementById("dashboardTitle").textContent = "Servo Control";
+      document.getElementById("feedNowBtn").textContent = "Feed Now";
+      document.getElementById("scheduleTitle").textContent = "Automatic Schedule";
+      document.getElementById("addScheduleBtn").textContent = "Add Schedule";
+      document.getElementById("historyTitle").textContent = "History";
+      document.getElementById("clearHistoryBtn").textContent = "Clear History";
+
+      // Ubah menu sidebar
+      const links = document.querySelectorAll(".menu a");
+      links[0].textContent = "Dashboard";
+      links[1].textContent = "Schedule";
+      links[2].textContent = "History";
+
+      showNotification("Language switched to English");
+    }
+
+    // ====== CREDITS POPUP ======
+    function showCredits() {
+      alert("Automatic Pet Feeder\nDeveloper: Gregorius\nVersion: 1.0.0");
+    }
+
+    // ====== NOTIFICATION ======
     function showNotification(message, color="#2ecc71") {
-            const notif = document.getElementById("notification");
+      const notif = document.getElementById("notification");
       notif.textContent = message;
       notif.style.background = color;
       notif.classList.add("show");
@@ -349,7 +376,7 @@
         editBtn.onclick = () => editSchedule(index);
 
         const delBtn = document.createElement("button");
-        delBtn.textContent = "Hapus";
+        delBtn.textContent = "Delete";
         delBtn.className = "delete-btn";
         delBtn.onclick = () => deleteSchedule(index);
 
