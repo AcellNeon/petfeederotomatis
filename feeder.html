@@ -305,7 +305,7 @@
     const db = getDatabase(app);
 
     window.loadAccountInfo = function(){
-      const userRef = ref(db,"users/currentUser");
+      const userRef = ref(db,"users/users");
       get(userRef).then(snapshot=>{
         if(snapshot.exists()){
           const data=snapshot.val();
