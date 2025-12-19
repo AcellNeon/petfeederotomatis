@@ -82,6 +82,34 @@
       from { filter: brightness(0.5); }
       to { filter: brightness(1); }
     }
+
+    /* Tombol bantuan WhatsApp */
+    .help-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25D366;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .help-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+    .help-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
   </style>
 </head>
 <body>
@@ -95,21 +123,19 @@
       <input type="password" id="pin" maxlength="4" placeholder="4 digit pin"><br>
       <button onclick="checkPin()">Login</button>
       <p id="status"></p>
-      <button onclick="showRegister()">Belum punya akun? Register</button>
-    </div>
-
-    <!-- Register -->
-    <div id="registerDiv" style="display:none;">
-      <h2>Register User</h2>
-      <input type="text" id="newUsername" placeholder="Username"><br>
-      <input type="password" id="newPin" maxlength="4" placeholder="4 digit pin"><br>
-      <button onclick="registerUser()">Register</button>
-      <p id="statusRegister"></p>
-      <button onclick="showLogin()">Sudah punya akun? Login</button>
     </div>
   </div>
 
-  <script>
+  <!-- Tombol Bantuan WhatsApp -->
+  <a href="https://wa.me/6281234567890" target="_blank" class="help-btn">
+    <!-- Ikon WhatsApp resmi (SVG) -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+      <path d="M380.9 97.1C339-2.7 210.4-32.6 121.1 28.1c-89.3 60.7-119.2 189.3-58.5 278.6l-26.2 94.6c-3.3 11.9 8.2 22.5 19.9 18.7l94.6-26.2c89.3 60.7 217.9 30.8 278.6-58.5 60.7-89.3 30.8-217.9-58.6-278.2zM224 413c-49.7 0-96.1-19.4-131.1-54.4-35-35-54.4-81.4-54.4-131.1s19.4-96.1 54.4-131.1c35-35 81.4-54.4 131.1-54.4s96.1 19.4 131.1 54.4c35 35 54.4 81.4 54.4 131.1s-19.4 96.1-54.4 131.1c-35 35-81.4 54.4-131.1 54.4zm84.1-126.5c-3.7-1.9-22-10.8-25.4-12-3.4-1.2-5.9-1.9-8.4 1.9-2.5 3.7-9.6 12-11.8 14.5-2.2 2.5-4.3 2.8-8 0.9-22.6-11.3-37.4-20.2-52.5-45.7-3.9-6.7 3.9-6.2 11.3-20.6 1.2-2.5 0.6-4.6-0.3-6.5-0.9-1.9-8.4-20.3-11.5-27.8-3-7.2-6.1-6.2-8.4-6.3-2.2-0.1-4.6-0.1-7.1-0.1-2.5 0-6.5 0.9-9.9 4.6-3.4 3.7-13 12.7-13 30.9s13.3 35.8 15.2 38.3c1.9 2.5 26.1 39.9 63.3 55.9 8.8 3.8 15.7 6.1 21.1 7.8 8.9 2.8 17 2.4 23.4 1.5 7.1-1.1 22-9 25.1-17.7 3.1-8.7 3.1-16.2 2.2-17.7-0.9-1.5-3.4-2.5-7.1-4.4z"/>
+    </svg>
+    Bantuan
+  </a>
+
+    <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA-sLBXum9oj1mpDp7rPn4--q3LCBQtMnI",
       authDomain: "loginpage-e42a7.firebaseapp.com",
@@ -158,37 +184,6 @@
         document.getElementById("status").innerText = "Terjadi error koneksi.";
         console.error(err);
       });
-    }
-
-    // Register user biasa
-    async function registerUser() {
-      const username = document.getElementById("newUsername").value.trim();
-      const pin = document.getElementById("newPin").value.trim();
-      if (!username || pin.length !== 4) {
-        document.getElementById("statusRegister").innerText = "Isi username dan PIN 4 digit.";
-        return;
-      }
-      const snap = await db.ref("users/" + username).get();
-      if (snap.exists()) {
-        document.getElementById("statusRegister").innerText = "Username sudah dipakai.";
-        return;
-      }
-      await db.ref("users/" + username).set({
-        pin: pin,
-        role: "user",
-        createdAt: Date.now()
-      });
-      document.getElementById("statusRegister").innerText = "Registrasi berhasil. Silakan login.";
-    }
-
-    // Toggle tampilan
-    function showRegister() {
-      document.getElementById("loginDiv").style.display = "none";
-      document.getElementById("registerDiv").style.display = "block";
-    }
-    function showLogin() {
-      document.getElementById("registerDiv").style.display = "none";
-      document.getElementById("loginDiv").style.display = "block";
     }
   </script>
 </body>
