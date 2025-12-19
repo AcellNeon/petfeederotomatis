@@ -3,118 +3,9 @@
 <head>
   <title>Login Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: 'Segoe UI', Helvetica, sans-serif;
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: url('anjai.jpg') no-repeat center center/cover;
-      color: white;
-    }
-
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(3px);
-      z-index: -1;
-    }
-
-    .container {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 30px;
-      width: 300px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-      animation: fadeIn 1s ease-in-out;
-      text-align: center;
-    }
-
-    h1, h2 {
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
-    }
-
-    input {
-      padding: 12px;
-      margin: 8px 0;
-      width: 80%;
-      font-size: 18px;
-      text-align: center;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      background: rgba(255,255,255,0.2);
-      color: white;
-      transition: background 0.3s;
-    }
-
-    input::placeholder { color: #ddd; }
-    input:focus { background: rgba(255,255,255,0.3); }
-
-    button {
-      padding: 12px 25px;
-      margin-top: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      color: white;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-
-    #status {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #ff8080;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(-20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    .link-btn {
-      background: none;
-      color: #ff8080;
-      font-size: 14px;
-      margin-top: 10px;
-      text-decoration: underline;
-      cursor: pointer;
-      border: none;
-    }
-
-    footer {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #ccc;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-    }
-
-    /* 📱 Responsif untuk HP */
-    @media (max-width: 480px) {
-      .container {
-        width: 90%;
-        padding: 20px;
-      }
-      h1, h2 { font-size: 20px; }
-      input { width: 100%; font-size: 16px; }
-      button { width: 100%; font-size: 16px; }
-      footer { font-size: 12px; }
-    }
-  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
 </head>
 <body>
   <div class="container">
@@ -135,18 +26,31 @@
     </div>
   </div>
 
-  <footer>
-    &copy; 2025 Kelompok PRD Imut
-  </footer>
-
   <script>
+    // 🔧 Firebase Config (copy dari Firebase Console)
+    const firebaseConfig = {
+    apiKey: "AIzaSyA-sLBXum9oj1mpDp7rPn4--q3LCBQtMnI",
+    authDomain: "loginpage-e42a7.firebaseapp.com",
+    projectId: "loginpage-e42a7",
+    storageBucket: "loginpage-e42a7.firebasestorage.app",
+    messagingSenderId: "535312484754",
+    appId: "1:535312484754:web:273829b9dff1ae9715594b"
+  };
+
+    // 🔧 Inisialisasi Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     function setPin() {
       const newPin = document.getElementById("newPin").value;
       if (newPin.length === 4) {
-        localStorage.setItem("userPIN", newPin);
-        alert("PIN berhasil disimpan!");
-        document.getElementById("setPinDiv").style.display = "none";
-        document.getElementById("loginDiv").style.display = "block";
+        db.ref("userPIN").set(newPin)  // simpan ke Firebase
+          .then(() => {
+            alert("PIN berhasil disimpan!");
+            document.getElementById("setPinDiv").style.display = "none";
+            document.getElementById("loginDiv").style.display = "block";
+          })
+          .catch(err => alert("Error: " + err));
       } else {
         alert("PIN harus 4 digit!");
       }
@@ -154,25 +58,31 @@
 
     function checkPin() {
       const pin = document.getElementById("pin").value;
-      const savedPin = localStorage.getItem("userPIN");
-      if (pin === savedPin) {
-        window.location.href = "feeder.html";
-      } else {
-        document.getElementById("status").innerText = "PIN salah!";
-      }
+      db.ref("userPIN").get().then(snapshot => {
+        if (snapshot.exists() && pin === snapshot.val()) {
+          window.location.href = "feeder.html";
+        } else {
+          document.getElementById("status").innerText = "PIN salah!";
+        }
+      });
     }
 
     function forgotPin() {
-      localStorage.removeItem("userPIN");
-      alert("PIN direset. Silakan buat PIN baru.");
-      document.getElementById("loginDiv").style.display = "none";
-      document.getElementById("setPinDiv").style.display = "block";
+      db.ref("userPIN").remove()
+        .then(() => {
+          alert("PIN direset. Silakan buat PIN baru.");
+          document.getElementById("loginDiv").style.display = "none";
+          document.getElementById("setPinDiv").style.display = "block";
+        });
     }
 
-    if (localStorage.getItem("userPIN")) {
-      document.getElementById("setPinDiv").style.display = "none";
-      document.getElementById("loginDiv").style.display = "block";
-    }
+    // 🔧 Cek apakah PIN sudah ada di Firebase
+    db.ref("userPIN").get().then(snapshot => {
+      if (snapshot.exists()) {
+        document.getElementById("setPinDiv").style.display = "none";
+        document.getElementById("loginDiv").style.display = "block";
+      }
+    });
   </script>
 </body>
 </html>
