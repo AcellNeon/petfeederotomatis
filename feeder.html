@@ -15,7 +15,6 @@
       animation: gradientFlow 15s ease infinite;
       color: white;
     }
-
     @keyframes gradientFlow {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -42,7 +41,9 @@
       text-decoration: none;
       font-size: 16px;
       color: #f1f1f1;
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       transition: 0.2s;
     }
     .sidebar a:hover { background-color: #575757; }
@@ -185,13 +186,13 @@
       <a href="#" onclick="closeSidebar()"><i class="fas fa-arrow-left"></i></a>
     </div>
     <div class="menu">
-      <a href="#" onclick="showSection('dashboard')">Dashboard</a>
-      <a href="#" onclick="showSection('schedule')">Jadwal</a>
-      <a href="#" onclick="showSection('history')">Riwayat</a>
+      <a href="#" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Dashboard</a>
+      <a href="#" onclick="showSection('schedule')"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="#" onclick="showSection('history')"><i class="fas fa-history"></i> Riwayat</a>
     </div>
     <div class="bottom">
       <a href="#" onclick="toggleSettings()"><i id="gearIcon" class="fas fa-cog"></i> Settings</a>
-      <a href="#" onclick="logout()">Logout</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
   </div>
 
@@ -220,9 +221,9 @@
     </div>
 
     <div id="historySection" class="login-card" style="display:none;">
-      <h2 id="historyTitle">Riwayat</h2>
+            <h2 id="historyTitle">Riwayat</h2>
       <ul id="historyList"></ul>
-            <button id="clearHistoryBtn" class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
+      <button id="clearHistoryBtn" class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
     </div>
   </div>
 
@@ -276,9 +277,9 @@
       document.getElementById("clearHistoryBtn").textContent = "Clear History";
 
       const links = document.querySelectorAll(".menu a");
-      links[0].textContent = "Dashboard";
-      links[1].textContent = "Schedule";
-      links[2].textContent = "History";
+      links[0].innerHTML = '<i class="fas fa-home"></i> Dashboard';
+      links[1].innerHTML = '<i class="fas fa-calendar-alt"></i> Schedule';
+      links[2].innerHTML = '<i class="fas fa-history"></i> History';
 
       showNotification("Language switched to English");
       document.getElementById("settingsBox").classList.remove("show");
@@ -293,9 +294,9 @@
       document.getElementById("clearHistoryBtn").textContent = "Hapus Riwayat";
 
       const links = document.querySelectorAll(".menu a");
-      links[0].textContent = "Dashboard";
-      links[1].textContent = "Jadwal";
-      links[2].textContent = "Riwayat";
+      links[0].innerHTML = '<i class="fas fa-home"></i> Dashboard';
+      links[1].innerHTML = '<i class="fas fa-calendar-alt"></i> Jadwal';
+      links[2].innerHTML = '<i class="fas fa-history"></i> Riwayat';
 
       showNotification("Bahasa diganti ke Indonesia");
       document.getElementById("settingsBox").classList.remove("show");
@@ -464,3 +465,4 @@
   </script>
 </body>
 </html>
+
