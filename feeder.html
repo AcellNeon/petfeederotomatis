@@ -110,7 +110,7 @@
     let schedules = [];
     let history = [];
 
-        window.toggleSidebar = function(){
+    window.toggleSidebar = function(){
       document.getElementById("sidebar").classList.add("open");
       document.getElementById("toggleBtn").classList.add("hidden");
     };
@@ -134,23 +134,156 @@
       gear.classList.add("rotate");
       setTimeout(()=>gear.classList.remove("rotate"),600);
     };
-    window.setEnglish = function(){ /* isi sama seperti sebelumnya */ };
-    window.setIndonesian = function(){ /* isi sama seperti sebelumnya */ };
-    window.showCredits = function(){ /* isi sama seperti sebelumnya */ };
-    window.showNotification = function(message,color="#2ecc71"){ /* isi sama seperti sebelumnya */ };
-    window.addHistory = function(action){ /* isi sama seperti sebelumnya */ };
-    window.updateHistoryList = function(){ /* isi sama seperti sebelumnya */ };
-    window.clearHistory = function(){ /* isi sama seperti sebelumnya */ };
-    window.saveHistory = function(){ /* isi sama seperti sebelumnya */ };
-    window.loadHistory = function(){ /* isi sama seperti sebelumnya */ };
-    window.sendCommand = function(){ /* isi sama seperti sebelumnya */ };
-    window.addSchedule = function(){ /* isi sama seperti sebelumnya */ };
-    window.deleteSchedule = function(index){ /* isi sama seperti sebelumnya */ };
-    window.editSchedule = function(index){ /* isi sama seperti sebelumnya */ };
-    window.updateScheduleList = function(){ /* isi sama seperti sebelumnya */ };
-    window.saveSchedules = function(){ /* isi sama seperti sebelumnya */ };
-    window.loadSchedules = function(){ /* isi sama seperti sebelumnya */ };
-    window.logout = function(){ /* isi sama seperti sebelumnya */ };
+
+    // Language
+    window.setEnglish = function(){
+      document.getElementById("dashboardTitle").textContent = "Servo Control";
+      document.getElementById("feedNowBtn").textContent = "Feed Now";
+      document.getElementById("scheduleTitle").textContent = "Automatic Schedule";
+      document.getElementById("addScheduleBtn").textContent = "Add Schedule";
+      document.getElementById("historyTitle").textContent = "History";
+      document.getElementById("clearHistoryBtn").textContent = "Clear History";
+      const links = document.querySelectorAll(".menu a");
+      links[0].innerHTML = '<i class="fas fa-home"></i> Dashboard';
+      links[1].innerHTML = '<i class="fas fa-calendar-alt"></i> Schedule';
+      links[2].innerHTML = '<i class="fas fa-history"></i> History';
+      showNotification("Language switched to English");
+      document.getElementById("settingsBox").classList.remove("show");
+    };
+    window.setIndonesian = function(){
+      document.getElementById("dashboardTitle").textContent = "Kontrol Servo";
+      document.getElementById("feedNowBtn").textContent = "Kasih Makan Sekarang";
+      document.getElementById("scheduleTitle").textContent = "Jadwal Otomatis";
+      document.getElementById("addScheduleBtn").textContent = "Tambah Jadwal";
+      document.getElementById("historyTitle").textContent = "Riwayat";
+      document.getElementById("clearHistoryBtn").textContent = "Hapus Riwayat";
+      const links = document.querySelectorAll(".menu a");
+      links[0].innerHTML = '<i class="fas fa-home"></i> Dashboard';
+      links[1].innerHTML = '<i class="fas fa-calendar-alt"></i> Jadwal';
+      links[2].innerHTML = '<i class="fas fa-history"></i> Riwayat';
+      showNotification("Bahasa diganti ke Indonesia");
+      document.getElementById("settingsBox").classList.remove("show");
+    };
+
+    // Credits
+    window.showCredits = function(){
+      alert("Automatic Pet Feeder\nWeb Developer: Gregorius Yura Lorenzo Saputra\nESP32 Developer: Muhammad Farhan Al Faiz, Ladya Mareta Syafarani\n3D Design: Asipattra Surya Andika\nDocumentation: Muhammad Zaky Arrafi\nVersion: 1.0.0");
+      document.getElementById("settingsBox").classList.remove("show");
+    };
+
+    // Notification
+    window.showNotification = function(message,color="#2ecc71"){
+      const notif=document.getElementById("notification");
+      notif.textContent=message;
+      notif.style.background=color;
+      notif.classList.add("show");
+      setTimeout(()=>notif.classList.remove("show"),3000);
+    };
+
+    // History
+    window.addHistory = function(action){
+      const now=new Date();
+      const timestamp=now.toLocaleString();
+      history.push(`${timestamp} - ${action}`);
+      saveHistory();
+      updateHistoryList();
+    };
+    window.updateHistoryList = function(){
+      const list=document.getElementById("historyList");
+      list.innerHTML="";
+      history.forEach(item=>{
+        const li=document.createElement("li");
+        li.textContent=item;
+        list.appendChild(li);
+      });
+    };
+    window.clearHistory = function(){
+      history=[];
+      saveHistory();
+      updateHistoryList();
+      showNotification("Riwayat dibersihkan","#e67e22");
+    };
+    window.saveHistory = function(){localStorage.setItem("feedHistory",JSON.stringify(history));};
+    window.loadHistory = function(){
+      const saved=localStorage.getItem("feedHistory");
+      if(saved){history=JSON.parse(saved);updateHistoryList();}
+    };
+
+    // Command
+    window.sendCommand = function(){
+      const url=`https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
+      fetch(url,{method:"POST"})
+        .then(()=>{showNotification("Kasih makan sekarang berhasil!");addHistory("Kasih makan manual");})
+        .catch(()=>{showNotification("Perintah gagal dikirim!","#e74c3c");});
+    };
+
+    // Schedule
+    window.addSchedule = function(){
+      const time=document.getElementById("feedTime").value;
+      if(time && !schedules.includes(time)){
+        schedules.push(time);
+        saveSchedules();
+        updateScheduleList();
+        showNotification("Jadwal ditambahkan: "+time);
+      }
+    };
+    window.deleteSchedule = function(index){
+      schedules.splice(index,1);
+      saveSchedules();
+      updateScheduleList();
+      showNotification("Jadwal dihapus","#e67e22");
+    };
+    window.editSchedule = function(index){
+      const newTime=prompt("Masukkan jam baru (format HH:MM)",schedules[index]);
+      if(newTime && /^[0-2][0-9]:[0-5][0-9]$/.test(newTime)){
+        schedules[index]=newTime;
+        saveSchedules();
+        updateScheduleList();
+        showNotification("Jadwal diubah: "+newTime);
+      } else {alert("Format jam salah! Gunakan format HH:MM");}
+    };
+    window.updateScheduleList = function(){
+      const list=document.getElementById("scheduleList");
+      list.innerHTML="";
+      schedules.forEach((time,index)=>{
+        const li=document.createElement("li");
+        li.innerHTML=`<i class="fas fa-clock"></i> ${time}`;
+        const editBtn=document.createElement("button");
+        editBtn.textContent="Edit";
+        editBtn.className="edit-btn";
+        editBtn.onclick=()=>editSchedule(index);
+        const delBtn=document.createElement("button");
+        delBtn.textContent="Delete";
+        delBtn.className="delete-btn";
+        delBtn.onclick=()=>deleteSchedule(index);
+        li.appendChild(editBtn);
+        li.appendChild(delBtn);
+        list.appendChild(li);
+      });
+    };
+    window.saveSchedules = function(){localStorage.setItem("feedSchedules",JSON.stringify(schedules));};
+    window.loadSchedules = function(){
+      const saved=localStorage.getItem("feedSchedules");
+      if(saved){schedules=JSON.parse(saved);updateScheduleList();}
+    };
+
+    // Auto Feed
+    setInterval(()=>{
+      const now=new Date();
+      const currentTime=now.toTimeString().slice(0,5);
+      if(schedules.includes(currentTime)){
+        sendCommand();
+        showNotification("Kasih makan otomatis: "+currentTime);
+        addHistory("Kasih makan otomatis pada "+currentTime);
+      }
+    },60000);
+
+    // Logout
+    window.logout = function(){
+      const card=document.getElementById("dashboardSection");
+      if(card){card.classList.add("fade-out");}
+      setTimeout(()=>{window.location.href="index.html";},600);
+    };
   </script>
 
   <!-- Script Firebase -->
