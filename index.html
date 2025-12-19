@@ -6,6 +6,108 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Helvetica, sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('anjai.jpg') no-repeat center center/cover;
+      animation: fadeBg 1.2s ease forwards;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      width: 340px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeSlideIn 0.8s ease forwards;
+    }
+
+    h1, h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: white;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+    }
+
+    input {
+      padding: 12px;
+      margin: 8px 0;
+      width: 90%;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    input::placeholder { color: #ddd; }
+    input:focus { background: rgba(255,255,255,0.3); }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ff9a9e, #fbc2eb);
+      color: white;
+      margin: 8px 0;
+      width: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+    }
+    button:active {
+      transform: scale(0.95);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .link-btn {
+      background: none;
+      color: #ff8080;
+      font-size: 14px;
+      margin-top: 10px;
+      text-decoration: underline;
+      cursor: pointer;
+      border: none;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #ff8080;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeBg {
+      from { filter: brightness(0.5); }
+      to { filter: brightness(1); }
+    }
+
+    @media (max-width: 480px) {
+      .container { width: 90%; padding: 20px; }
+      h1, h2 { font-size: 20px; }
+      input { width: 100%; font-size: 14px; }
+      button { font-size: 14px; }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -27,24 +129,23 @@
   </div>
 
   <script>
-    // 🔧 Firebase Config (copy dari Firebase Console)
     const firebaseConfig = {
-    apiKey: "AIzaSyA-sLBXum9oj1mpDp7rPn4--q3LCBQtMnI",
-    authDomain: "loginpage-e42a7.firebaseapp.com",
-    projectId: "loginpage-e42a7",
-    storageBucket: "loginpage-e42a7.firebasestorage.app",
-    messagingSenderId: "535312484754",
-    appId: "1:535312484754:web:273829b9dff1ae9715594b"
-  };
+      apiKey: "AIzaSyA-sLBXum9oj1mpDp7rPn4--q3LCBQtMnI",
+      authDomain: "loginpage-e42a7.firebaseapp.com",
+      databaseURL: "https://loginpage-e42a7-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      projectId: "loginpage-e42a7",
+      storageBucket: "loginpage-e42a7.firebasestorage.app",
+      messagingSenderId: "535312484754",
+      appId: "1:535312484754:web:273829b9dff1ae9715594b"
+    };
 
-    // 🔧 Inisialisasi Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     function setPin() {
       const newPin = document.getElementById("newPin").value;
       if (newPin.length === 4) {
-        db.ref("userPIN").set(newPin)  // simpan ke Firebase
+        db.ref("userPIN").set(newPin)
           .then(() => {
             alert("PIN berhasil disimpan!");
             document.getElementById("setPinDiv").style.display = "none";
@@ -76,7 +177,6 @@
         });
     }
 
-    // 🔧 Cek apakah PIN sudah ada di Firebase
     db.ref("userPIN").get().then(snapshot => {
       if (snapshot.exists()) {
         document.getElementById("setPinDiv").style.display = "none";
