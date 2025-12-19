@@ -126,6 +126,16 @@
     .edit-btn { background: #3498db; }
     .delete-btn { background: #e74c3c; }
 
+    /* Riwayat */
+    #historySection { display: none; text-align: left; }
+    #historyList li {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 12px;
+      margin: 6px 0;
+      border-radius: 6px;
+    }
+
     /* Notification */
     .notification {
       position: fixed;
@@ -155,7 +165,7 @@
 <body>
   <!-- Toggle Sidebar -->
   <button id="toggleBtn" class="toggle-btn" onclick="toggleSidebar()">
-    <i class="fas fa-arrow-right"></i>
+    <i class="fas fa-bars"></i>
   </button>
 
   <!-- Sidebar -->
@@ -191,9 +201,10 @@
     </div>
 
     <!-- History Section -->
-    <div id="historySection" class="login-card" style="display:none;">
+    <div id="historySection" class="login-card">
       <h2>Riwayat</h2>
-      <p>Data riwayat pemberian makan akan ditampilkan di sini.</p>
+      <ul id="historyList"></ul>
+      <button class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
     </div>
   </div>
 
@@ -201,6 +212,7 @@
     const apiKey = "09LPP2CN0H8VL1I2";
     const talkbackID = "56041";
     let schedules = [];
+    let history = [];
 
     function toggleSidebar() {
       document.getElementById("sidebar").classList.add("open");
@@ -223,7 +235,7 @@
         document.getElementById("scheduleSection").style.display = "block";
       }
       if(section === "history") {
-        document.getElementById("historySection").style.display = "block";
+                document.getElementById("historySection").style.display = "block";
       }
       closeSidebar();
     }
@@ -236,17 +248,41 @@
       setTimeout(() => notif.classList.remove("show"), 3000);
     }
 
+    function addHistory(action) {
+      const now = new Date();
+      const timestamp = now.toLocaleString();
+      history.push(`${timestamp} - ${action}`);
+      updateHistoryList();
+    }
+
+    function updateHistoryList() {
+      const list = document.getElementById("historyList");
+      list.innerHTML = "";
+      history.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    function clearHistory() {
+      history = [];
+      updateHistoryList();
+      showNotification("Riwayat dibersihkan", "#e67e22");
+    }
+
     function sendCommand() {
       const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
       fetch(url, { method: "POST" })
-      .then(response => response.text())
-      .then(() => {
-        showNotification("Kasih makan sekarang berhasil!");
-    })
-      .catch(() => {
-        showNotification("Perintah gagal dikirim!", "#e74c3c");
-    });
-}
+        .then(response => response.text())
+        .then(() => {
+          showNotification("Kasih makan sekarang berhasil!");
+          addHistory("Kasih makan manual");
+        })
+        .catch(() => {
+          showNotification("Perintah gagal dikirim!", "#e74c3c");
+        });
+    }
 
     function addSchedule() {
       const time = document.getElementById("feedTime").value;
@@ -319,6 +355,7 @@
       if (schedules.includes(currentTime)) {
         sendCommand();
         showNotification("Kasih makan otomatis: " + currentTime);
+        addHistory("Kasih makan otomatis pada " + currentTime);
       }
     }, 60000);
 
