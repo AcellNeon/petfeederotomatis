@@ -9,8 +9,17 @@
       font-family: 'Segoe UI', Helvetica, sans-serif;
       margin: 0;
       height: 100vh;
-      background: url('anjaiu.JPG') no-repeat center center/cover;
-      animation: fadeBg 1.2s ease forwards;
+      /* Background gradient elegan & mewah */
+      background: linear-gradient(135deg, #1f1c2c, #928dab, #2c3e50, #bdc3c7);
+      background-size: 400% 400%;
+      animation: gradientFlow 15s ease infinite;
+      color: white;
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     /* Sidebar */
@@ -70,13 +79,14 @@
 
     /* Card */
     .login-card {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 15px;
       padding: 30px;
       width: 340px;
       text-align: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
       animation: fadeSlideIn 0.8s ease forwards;
     }
 
@@ -113,22 +123,14 @@
     .settings-box.show { display: flex; }
 
     /* Gear animation */
-    .rotate {
-      animation: spin 0.6s linear;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+    .rotate { animation: spin 0.6s linear; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     /* Jadwal lebih bagus */
-    #scheduleList {
-      list-style: none;
-      padding: 0;
-    }
+    #scheduleList { list-style: none; padding: 0; }
     #scheduleList li {
       font-size: 16px;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.15);
       color: #fff;
       padding: 12px 15px;
       margin: 10px 0;
@@ -140,10 +142,7 @@
       transition: transform 0.2s ease;
     }
     #scheduleList li:hover { transform: scale(1.05); }
-    #scheduleList li i {
-      margin-right: 10px;
-      color: #f1c40f;
-    }
+    #scheduleList li i { margin-right: 10px; color: #f1c40f; }
 
     .edit-btn { background: #3498db; }
     .delete-btn { background: #e74c3c; }
@@ -168,10 +167,6 @@
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes fadeBg {
-      from { filter: brightness(0.5); }
-      to { filter: brightness(1); }
-    }
     @keyframes slideIn {
       from { opacity: 0; transform: translateX(-20px); }
       to { opacity: 1; transform: translateX(0); }
@@ -195,9 +190,7 @@
       <a href="#" onclick="showSection('history')">Riwayat</a>
     </div>
     <div class="bottom">
-      <a href="#" onclick="toggleSettings()">
-        <i id="gearIcon" class="fas fa-cog"></i> Settings
-      </a>
+      <a href="#" onclick="toggleSettings()"><i id="gearIcon" class="fas fa-cog"></i> Settings</a>
       <a href="#" onclick="logout()">Logout</a>
     </div>
   </div>
@@ -214,13 +207,11 @@
 
   <!-- Konten utama -->
   <div class="main-content">
-    <!-- Dashboard Section -->
     <div id="dashboardSection" class="login-card">
       <h1 id="dashboardTitle">Kontrol Servo</h1>
       <button id="feedNowBtn" class="action-btn" onclick="sendCommand()">Kasih Makan Sekarang</button>
     </div>
 
-    <!-- Jadwal Section -->
     <div id="scheduleSection" class="login-card" style="display:none;">
       <h2 id="scheduleTitle">Jadwal Otomatis</h2>
       <input type="time" id="feedTime">
@@ -228,17 +219,16 @@
       <ul id="scheduleList"></ul>
     </div>
 
-    <!-- History Section -->
     <div id="historySection" class="login-card" style="display:none;">
       <h2 id="historyTitle">Riwayat</h2>
       <ul id="historyList"></ul>
-      <button id="clearHistoryBtn" class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
+            <button id="clearHistoryBtn" class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
     </div>
   </div>
 
   <script>
     const apiKey = "09LPP2CN0H8VL1I2";
-        const talkbackID = "56041";
+    const talkbackID = "56041";
     let schedules = [];
     let history = [];
 
