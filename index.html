@@ -3,9 +3,11 @@
 <head>
   <title>Login Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+
+  <!-- Firebase SDK (compat untuk namespace 'firebase') -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
   <style>
     body {
       font-family: 'Segoe UI', Helvetica, sans-serif;
@@ -129,6 +131,7 @@
   </div>
 
   <script>
+    // Config Firebase milikmu
     const firebaseConfig = {
       apiKey: "AIzaSyA-sLBXum9oj1mpDp7rPn4--q3LCBQtMnI",
       authDomain: "loginpage-e42a7.firebaseapp.com",
@@ -139,7 +142,8 @@
       appId: "1:535312484754:web:273829b9dff1ae9715594b"
     };
 
-    const app = firebase.initializeApp(firebaseConfig);
+    // Inisialisasi Firebase (compat)
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     function setPin() {
@@ -165,6 +169,9 @@
         } else {
           document.getElementById("status").innerText = "PIN salah!";
         }
+      }).catch(err => {
+        document.getElementById("status").innerText = "Terjadi error koneksi.";
+        console.error(err);
       });
     }
 
@@ -174,15 +181,17 @@
           alert("PIN direset. Silakan buat PIN baru.");
           document.getElementById("loginDiv").style.display = "none";
           document.getElementById("setPinDiv").style.display = "block";
-        });
+        })
+        .catch(err => alert("Error: " + err));
     }
 
+    // Cek apakah PIN sudah ada di Firebase saat load
     db.ref("userPIN").get().then(snapshot => {
       if (snapshot.exists()) {
         document.getElementById("setPinDiv").style.display = "none";
         document.getElementById("loginDiv").style.display = "block";
       }
-    });
+    }).catch(err => console.error(err));
   </script>
 </body>
 </html>
