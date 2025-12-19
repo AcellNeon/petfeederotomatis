@@ -3,7 +3,6 @@
 <head>
   <title>Automatic Pet Feeder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       font-family: 'Segoe UI', Helvetica, sans-serif;
@@ -13,205 +12,89 @@
       justify-content: center;
       align-items: center;
       background: url('anjai.jpg') no-repeat center center/cover;
-      transition: background-color 0.5s ease, color 0.5s ease;
     }
 
     .login-card {
       background: rgba(255,255,255,0.1);
       backdrop-filter: blur(10px);
       border-radius: 15px;
-      padding: 40px;
+      padding: 30px;
       width: 340px;
       text-align: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      animation: fadeIn 1s ease-in-out;
-      transition: background 0.5s ease, color 0.5s ease;
     }
 
     h1 {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       font-size: 24px;
       color: white;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
-      transition: color 0.5s ease;
     }
 
     .action-btn {
-      padding: 15px 30px;
-      font-size: 18px;
+      padding: 12px 20px;
+      font-size: 16px;
       border: none;
       cursor: pointer;
       border-radius: 8px;
       background: linear-gradient(135deg, #ff9a9e, #fbc2eb);
       color: white;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.5s ease, color 0.5s ease;
       margin: 8px 0;
       width: 100%;
     }
 
-    .action-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-
-    .logout-btn, .settings-btn {
-      position: absolute;
-      top: 20px;
-      padding: 10px 20px;
-      font-size: 14px;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.5s ease;
-    }
-
-    .logout-btn {
-      right: 20px;
-      background: #e74c3c;
-    }
-
-    .settings-btn {
-      left: 20px;
-      background: #3498db;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .settings-btn i {
-      transition: transform 0.5s;
-    }
-
-    .settings-btn:hover i {
-      transform: rotate(180deg);
-    }
-
-    .logout-btn:hover, .settings-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-
     #status {
-      margin-top: 15px;
+      margin-top: 10px;
       font-weight: bold;
       color: #fff;
-      transition: color 0.5s ease;
     }
 
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(-20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    .settings-box {
-      position: absolute;
-      top: 60px;
-      left: 20px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      transition: background 0.5s ease, color 0.5s ease;
-      max-width: 90%;
-    }
-
-    .settings-box button {
-      padding: 8px 15px;
-      border: none;
+    ul { list-style: none; padding: 0; }
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.2);
+      margin: 5px 0;
+      padding: 5px 10px;
       border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background 0.5s ease, color 0.5s ease;
-    }
-
-    .dark-btn {
-      background: #2c3e50;
       color: white;
     }
-
-    .light-btn {
-      background: #ecf0f1;
-      color: black;
+    .delete-btn, .edit-btn {
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 5px;
     }
+    .delete-btn { background: #e74c3c; }
+    .edit-btn { background: #3498db; }
 
-    /* Terminal style box */
-    .terminal-box {
-      background: #111;
-      color: #0f0;
-      font-family: monospace;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .dark-mode {
-      background: #2c3e50 !important;
-      color: white !important;
-    }
-
-    .light-mode {
-      background: #ecf0f1 !important;
-      color: black !important;
-    }
-
-    /* 📱 Responsif untuk HP */
     @media (max-width: 480px) {
-      .login-card {
-        width: 90%;
-        padding: 20px;
-      }
+      .login-card { width: 90%; padding: 20px; }
       h1 { font-size: 20px; }
-      .action-btn { font-size: 16px; }
-      .logout-btn, .settings-btn {
-        font-size: 12px;
-        padding: 8px 12px;
-      }
-      .settings-box {
-        font-size: 12px;
-        left: 10px;
-        right: 10px;
-      }
-      .terminal-box {
-        font-size: 12px;
-        line-height: 1.4;
-      }
+      .action-btn { font-size: 14px; }
     }
   </style>
 </head>
 <body>
-  <button class="logout-btn" onclick="logout()">Logout</button>
-  <button class="settings-btn" onclick="toggleSettings()">
-    <i class="fas fa-cog"></i> Settings
-  </button>
-
-  <div class="settings-box" id="settingsBox">
-    <button class="dark-btn" onclick="setDarkMode()">Dark Mode</button>
-    <button class="light-btn" onclick="setLightMode()">Light Mode</button>
-    <div class="terminal-box">
-      Nama Kelompok:<br>
-      1. Muhammad Zaky Arrafi<br>
-      2. Gregorius Yura Lorenzo Saputra<br>
-      3. Ladya Mareta Syafarani<br>
-      4. Asipattra Surya Andika<br>
-      5. Muhammad Farhan Al Faiz
-    </div>
-  </div>
-
   <div class="login-card">
     <h1>Kontrol Servo</h1>
-    <button class="action-btn" onclick="sendCommand()">Kasih Makan</button>
+    <button class="action-btn" onclick="sendCommand()">Kasih Makan Sekarang</button>
     <p id="status"></p>
+
+    <h2 style="color:white;">Jadwal Otomatis</h2>
+    <input type="time" id="feedTime">
+    <button class="action-btn" onclick="addSchedule()">Tambah Jadwal</button>
+    <ul id="scheduleList"></ul>
   </div>
 
   <script>
     const apiKey = "09LPP2CN0H8VL1I2";
     const talkbackID = "56041";
+    let schedules = [];
 
     function sendCommand() {
       const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
@@ -227,24 +110,79 @@
         });
     }
 
-    function logout() {
-      window.location.href = "index.html";
+    function addSchedule() {
+      const time = document.getElementById("feedTime").value;
+      if (time && !schedules.includes(time)) {
+        schedules.push(time);
+        saveSchedules();
+        updateScheduleList();
+        document.getElementById("status").innerText = "Jadwal ditambahkan: " + time;
+      }
     }
 
-    function toggleSettings() {
-      const box = document.getElementById("settingsBox");
-      box.style.display = box.style.display === "flex" ? "none" : "flex";
+    function deleteSchedule(index) {
+      schedules.splice(index, 1);
+      saveSchedules();
+      updateScheduleList();
+      document.getElementById("status").innerText = "Jadwal dihapus";
     }
 
-    function setDarkMode() {
-      document.body.classList.remove("light-mode");
-      document.body.classList.add("dark-mode");
+    function editSchedule(index) {
+      const newTime = prompt("Masukkan jam baru (format HH:MM)", schedules[index]);
+      if (newTime && /^[0-2][0-9]:[0-5][0-9]$/.test(newTime)) {
+        schedules[index] = newTime;
+        saveSchedules();
+        updateScheduleList();
+        document.getElementById("status").innerText = "Jadwal diubah menjadi: " + newTime;
+      } else {
+        alert("Format jam salah! Gunakan format HH:MM");
+      }
     }
 
-    function setLightMode() {
-      document.body.classList.remove("dark-mode");
-      document.body.classList.add("light-mode");
+    function updateScheduleList() {
+      const list = document.getElementById("scheduleList");
+      list.innerHTML = "";
+      schedules.forEach((time, index) => {
+        const li = document.createElement("li");
+        li.textContent = time;
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Hapus";
+        delBtn.className = "delete-btn";
+        delBtn.onclick = () => deleteSchedule(index);
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.className = "edit-btn";
+        editBtn.onclick = () => editSchedule(index);
+
+        li.appendChild(editBtn);
+        li.appendChild(delBtn);
+        list.appendChild(li);
+      });
     }
+
+    function saveSchedules() {
+      localStorage.setItem("feedSchedules", JSON.stringify(schedules));
+    }
+
+    function loadSchedules() {
+      const saved = localStorage.getItem("feedSchedules");
+      if (saved) {
+        schedules = JSON.parse(saved);
+        updateScheduleList();
+      }
+    }
+
+    setInterval(() => {
+      const now = new Date();
+      const currentTime = now.toTimeString().slice(0,5); // format HH:MM
+      if (schedules.includes(currentTime)) {
+        sendCommand();
+        document.getElementById("status").innerText = "Kasih makan otomatis pada " + currentTime;
+      }
+    }, 60000);
+
+    loadSchedules();
   </script>
 </body>
 </html>
