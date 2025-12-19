@@ -22,7 +22,7 @@
       top: 0;
       left: -250px;
       background-color: #111;
-      transition: 0.3s;
+      transition: left 0.4s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -56,18 +56,12 @@
       z-index: 1100;
       transition: transform 0.3s;
     }
-    .toggle-btn i {
-      transition: transform 0.3s;
-    }
-    .toggle-btn:hover i {
-      transform: rotate(180deg);
-    }
     .toggle-btn.hidden { display: none; }
 
     /* Konten utama */
     .main-content {
       margin-left: 0;
-      transition: margin-left 0.3s;
+      transition: margin-left 0.4s ease;
       padding: 20px;
       display: flex;
       justify-content: center;
@@ -119,10 +113,10 @@
 
     /* Settings box */
     .settings-box {
-      position: absolute;
-      top: 60px;
-      left: 20px;
-      background: rgba(0,0,0,0.7);
+      position: fixed;
+      bottom: 80px;
+      left: 270px;
+      background: rgba(0,0,0,0.9);
       color: white;
       padding: 15px;
       border-radius: 10px;
@@ -130,8 +124,9 @@
       flex-direction: column;
       gap: 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      max-width: 90%;
+      animation: slideIn 0.4s ease forwards;
     }
+    .settings-box.show { display: flex; }
 
     /* Notification */
     .notification {
@@ -157,6 +152,10 @@
       from { filter: brightness(0.5); }
       to { filter: brightness(1); }
     }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
   </style>
 </head>
 <body>
@@ -175,6 +174,8 @@
     <div class="bottom">
       <a href="#" onclick="toggleSettings()"><i class="fas fa-cog"></i> Settings</a>
       <a href="#" onclick="logout()">Logout</a>
+      <!-- Tombol anak panah untuk menutup sidebar -->
+      <a href="#" onclick="closeSidebar()"><i class="fas fa-arrow-left"></i> Tutup</a>
     </div>
   </div>
 
@@ -208,28 +209,41 @@
     function toggleSidebar() {
       const sidebar = document.getElementById("sidebar");
       const toggleBtn = document.getElementById("toggleBtn");
-      sidebar.classList.toggle("open");
-      if (sidebar.classList.contains("open")) {
-        toggleBtn.classList.add("hidden"); // sembunyikan tombol saat sidebar terbuka
-      } else {
-        toggleBtn.classList.remove("hidden");
-      }
+      sidebar.classList.add("open");
+      toggleBtn.classList.add("hidden");
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const toggleBtn = document.getElementById("toggleBtn");
+      sidebar.classList.remove("open");
+      toggleBtn.classList.remove("hidden");
+    }
+
+    function toggleSettings() {
+      const box = document.getElementById("settingsBox");
+      box.classList.toggle("show");
+    }
+
+    function setDarkMode() {
+      document.body.style.backgroundColor = "#2c3e50";
+      document.body.style.color = "white";
+      document.querySelector(".login-card").style.background = "rgba(0,0,0,0.6)";
+      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "white");
+    }
+
+    function setLightMode() {
+      document.body.style.backgroundColor = "#ecf0f1";
+      document.body.style.color = "black";
+      document.querySelector(".login-card").style.background = "rgba(255,255,255,0.8)";
+      document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "black");
     }
 
     function showNotification(message, color="#2ecc71") {
       const notif = document.getElementById("notification");
-      notif.textContent = message;
-      notif.style.background = color;
-      notif.classList.add("show");
+      notif.textContent
+            notif.classList.add("show");
       setTimeout(() => notif.classList.remove("show"), 3000);
-    }
-
-    function sendCommand() {
-      const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
-      fetch(url, { method: "POST" })
-        .then(response => response.text())
-        .then(() => showNotification("Kasih makan sekarang berhasil!"))
-        .catch(() => showNotification("Perintah gagal dikirim!", "#e74c3c"));
     }
 
     function addSchedule() {
@@ -250,8 +264,8 @@
     }
 
     function editSchedule(index) {
-      const newTime = prompt("Masukkan jam baru (format)");
-        if (newTime && /^[0-2][0-9]:[0-5][0-9]$/.test(newTime)) {
+      const newTime = prompt("Masukkan jam baru (format HH:MM)", schedules[index]);
+      if (newTime && /^[0-2][0-9]:[0-5][0-9]$/.test(newTime)) {
         schedules[index] = newTime;
         saveSchedules();
         updateScheduleList();
@@ -316,7 +330,7 @@
 
     function toggleSettings() {
       const box = document.getElementById("settingsBox");
-      box.style.display = box.style.display === "flex" ? "none" : "flex";
+      box.classList.toggle("show");
     }
 
     function setDarkMode() {
