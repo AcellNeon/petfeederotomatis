@@ -9,7 +9,7 @@
       font-family: 'Segoe UI', Helvetica, sans-serif;
       margin: 0;
       height: 100vh;
-      background: url('anjaiu.JPG') no-repeat center center/cover;
+      background: url('anjai.jpg') no-repeat center center/cover;
       animation: fadeBg 1.2s ease forwards;
     }
 
@@ -121,6 +121,33 @@
       to { transform: rotate(360deg); }
     }
 
+    /* Jadwal lebih bagus */
+    #scheduleList {
+      list-style: none;
+      padding: 0;
+    }
+    #scheduleList li {
+      font-size: 16px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s ease;
+    }
+    #scheduleList li:hover { transform: scale(1.05); }
+    #scheduleList li i {
+      margin-right: 10px;
+      color: #f1c40f;
+    }
+
+    .edit-btn { background: #3498db; }
+    .delete-btn { background: #e74c3c; }
+
     /* Notification */
     .notification {
       position: fixed;
@@ -177,7 +204,8 @@
 
   <!-- Settings Box -->
   <div class="settings-box" id="settingsBox">
-    <button class="action-btn" onclick="setEnglish()">Language</button>
+    <button class="action-btn" onclick="setEnglish()">Switch to English</button>
+    <button class="action-btn" onclick="setIndonesian()">Switch to Bahasa</button>
     <button class="action-btn" onclick="showCredits()">Credits</button>
   </div>
 
@@ -210,7 +238,7 @@
 
   <script>
     const apiKey = "09LPP2CN0H8VL1I2";
-    const talkbackID = "56041";
+        const talkbackID = "56041";
     let schedules = [];
     let history = [];
 
@@ -241,7 +269,7 @@
     }
 
     function toggleSettings() {
-            const box = document.getElementById("settingsBox");
+      const box = document.getElementById("settingsBox");
       const gear = document.getElementById("gearIcon");
       box.classList.toggle("show");
       gear.classList.add("rotate");
@@ -250,7 +278,6 @@
 
     // ====== LANGUAGE SWITCH ======
     function setEnglish() {
-      // Ubah teks utama ke bahasa Inggris
       document.getElementById("dashboardTitle").textContent = "Servo Control";
       document.getElementById("feedNowBtn").textContent = "Feed Now";
       document.getElementById("scheduleTitle").textContent = "Automatic Schedule";
@@ -258,18 +285,36 @@
       document.getElementById("historyTitle").textContent = "History";
       document.getElementById("clearHistoryBtn").textContent = "Clear History";
 
-      // Ubah menu sidebar
       const links = document.querySelectorAll(".menu a");
       links[0].textContent = "Dashboard";
       links[1].textContent = "Schedule";
       links[2].textContent = "History";
 
       showNotification("Language switched to English");
+      document.getElementById("settingsBox").classList.remove("show");
+    }
+
+    function setIndonesian() {
+      document.getElementById("dashboardTitle").textContent = "Kontrol Servo";
+      document.getElementById("feedNowBtn").textContent = "Kasih Makan Sekarang";
+      document.getElementById("scheduleTitle").textContent = "Jadwal Otomatis";
+      document.getElementById("addScheduleBtn").textContent = "Tambah Jadwal";
+      document.getElementById("historyTitle").textContent = "Riwayat";
+      document.getElementById("clearHistoryBtn").textContent = "Hapus Riwayat";
+
+      const links = document.querySelectorAll(".menu a");
+      links[0].textContent = "Dashboard";
+      links[1].textContent = "Jadwal";
+      links[2].textContent = "Riwayat";
+
+      showNotification("Bahasa diganti ke Indonesia");
+      document.getElementById("settingsBox").classList.remove("show");
     }
 
     // ====== CREDITS POPUP ======
     function showCredits() {
       alert("Automatic Pet Feeder\nDeveloper: Gregorius\nVersion: 1.0.0");
+      document.getElementById("settingsBox").classList.remove("show");
     }
 
     // ====== NOTIFICATION ======
@@ -368,7 +413,7 @@
       list.innerHTML = "";
       schedules.forEach((time, index) => {
         const li = document.createElement("li");
-        li.textContent = time;
+        li.innerHTML = `<i class="fas fa-clock"></i> ${time}`;
 
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
