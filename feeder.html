@@ -14,6 +14,7 @@
       align-items: center;
       background: url('anjai.jpg') no-repeat center center/cover;
       animation: fadeBg 1.2s ease forwards;
+      transition: background-color 0.5s, color 0.5s;
     }
 
     .login-card {
@@ -27,6 +28,7 @@
       opacity: 0;
       transform: translateY(30px);
       animation: fadeSlideIn 0.8s ease forwards;
+      transition: background 0.5s, color 0.5s;
     }
 
     h1 {
@@ -34,6 +36,7 @@
       font-size: 24px;
       color: white;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+      transition: color 0.5s;
     }
 
     .action-btn {
@@ -68,6 +71,7 @@
       margin-top: 10px;
       font-weight: bold;
       color: #fff;
+      transition: color 0.5s;
     }
 
     ul { list-style: none; padding: 0; }
@@ -80,7 +84,9 @@
       padding: 5px 10px;
       border-radius: 6px;
       color: white;
+      transition: background 0.5s, color 0.5s;
     }
+
     .delete-btn, .edit-btn {
       border: none;
       color: white;
@@ -146,6 +152,24 @@
       max-width: 90%;
     }
 
+    /* Notifikasi */
+    .notification {
+      position: fixed;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2ecc71;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: top 0.5s ease;
+      z-index: 9999;
+    }
+    .notification.show {
+      top: 20px;
+    }
+
     /* Animasi keluar */
     @keyframes fadeSlideOut {
       from { opacity: 1; transform: translateY(0); }
@@ -191,12 +215,14 @@
     <button onclick="setLightMode()">Light Mode</button>
   </div>
 
+  <!-- Notifikasi -->
+  <div class="notification" id="notification"></div>
+
   <!-- Kontrol Servo & Jadwal -->
   <div class="login-card" id="card">
     <h1>Kontrol Servo</h1>
     <button class="action-btn" onclick="sendCommand()">Kasih Makan Sekarang</button>
     <p id="status"></p>
-
     <h2 style="color:white;">Jadwal Otomatis</h2>
     <input type="time" id="feedTime">
     <button class="action-btn" onclick="addSchedule()">Tambah Jadwal</button>
@@ -208,27 +234,40 @@
     const talkbackID = "56041";
     let schedules = [];
 
+    function showNotification(message, color="#2ecc71") {
+      const notif = document.getElementById("notification");
+      notif.textContent = message;
+      notif.style.background = color;
+      notif.classList.add("show");
+      setTimeout(() => {
+        notif.classList.remove("show");
+      }, 3000);
+    }
+
     function sendCommand() {
       const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
       fetch(url, { method: "POST" })
         .then(response => response.text())
         .then(data => {
           document.getElementById("status").innerText = "Perintah berhasil dikirim";
+          showNotification("Kasih makan sekarang berhasil!");
           console.log(data);
         })
         .catch(err => {
           document.getElementById("status").innerText = "Perintah gagal dikirim";
+          showNotification("Perintah gagal dikirim!", "#e74c3c");
           console.error(err);
         });
     }
 
-        function addSchedule() {
+    function addSchedule() {
       const time = document.getElementById("feedTime").value;
       if (time && !schedules.includes(time)) {
         schedules.push(time);
         saveSchedules();
         updateScheduleList();
         document.getElementById("status").innerText = "Jadwal ditambahkan: " + time;
+        showNotification("Jadwal ditambahkan: " + time);
       }
     }
 
@@ -237,6 +276,7 @@
       saveSchedules();
       updateScheduleList();
       document.getElementById("status").innerText = "Jadwal dihapus";
+      showNotification("Jadwal dihapus", "#e67e22");
     }
 
     function editSchedule(index) {
@@ -246,6 +286,7 @@
         saveSchedules();
         updateScheduleList();
         document.getElementById("status").innerText = "Jadwal diubah menjadi: " + newTime;
+        showNotification("Jadwal diubah: " + newTime);
       } else {
         alert("Format jam salah! Gunakan format HH:MM");
       }
@@ -291,6 +332,7 @@
       if (schedules.includes(currentTime)) {
         sendCommand();
         document.getElementById("status").innerText = "Kasih makan otomatis pada " + currentTime;
+        showNotification("Kasih makan otomatis: " + currentTime);
       }
     }, 60000);
 
@@ -299,7 +341,7 @@
       card.classList.add("fade-out");
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 600); // sesuai durasi animasi keluar
+      }, 600);
     }
 
     function toggleSettings() {
@@ -310,14 +352,17 @@
     function setDarkMode() {
       document.body.style.backgroundColor = "#2c3e50";
       document.body.style.color = "white";
+      document.querySelector(".login-card").style.background = "rgba(0,0,0,0.6)";
+      document.querySelectorAll("h1,h2,#status,li").forEach(el => el.style.color = "white");
     }
 
     function setLightMode() {
       document.body.style.backgroundColor = "#ecf0f1";
       document.body.style.color = "black";
+      document.querySelector(".login-card").style.background = "rgba(255,255,255,0.8)";
+      document.querySelectorAll("h1,h2,#status,li").forEach(el => el.style.color = "black");
     }
 
-    // Load jadwal saat halaman dibuka
     window.onload = loadSchedules;
   </script>
 </body>
