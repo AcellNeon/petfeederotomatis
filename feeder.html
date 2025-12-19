@@ -236,7 +236,28 @@
     }
     function closeSidebar() {
       document.getElementById("sidebar").classList.remove("open");
-            document.getElementById("toggleBtn").classList.remove("hidden");
+      document.getElementById("toggleBtn").classList.remove("hidden");
+    }
+
+        function showSection(section) {
+      // sembunyikan semua section
+      document.getElementById("dashboardSection").style.display = "none";
+      document.getElementById("scheduleSection").style.display = "none";
+      document.getElementById("historySection").style.display = "none";
+
+      // tampilkan section sesuai menu
+      if(section === "dashboard") {
+        document.getElementById("dashboardSection").style.display = "block";
+      }
+      if(section === "schedule") {
+        document.getElementById("scheduleSection").style.display = "block";
+      }
+      if(section === "history") {
+        document.getElementById("historySection").style.display = "block";
+      }
+
+      // tutup sidebar setelah klik
+      closeSidebar();
     }
 
     function toggleSettings() {
@@ -249,7 +270,6 @@
       document.body.style.color = "white";
       document.querySelectorAll(".login-card").forEach(card => card.style.background = "rgba(0,0,0,0.6)");
       document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "white");
-      // otomatis tutup menu settings
       document.getElementById("settingsBox").classList.remove("show");
     }
 
@@ -258,7 +278,6 @@
       document.body.style.color = "black";
       document.querySelectorAll(".login-card").forEach(card => card.style.background = "rgba(255,255,255,0.8)");
       document.querySelectorAll("h1,h2,li").forEach(el => el.style.color = "black");
-      // otomatis tutup menu settings
       document.getElementById("settingsBox").classList.remove("show");
     }
 
