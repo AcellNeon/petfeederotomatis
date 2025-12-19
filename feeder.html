@@ -22,7 +22,6 @@
       top: 0;
       left: -250px;
       background-color: #111;
-      overflow-x: hidden;
       transition: 0.3s;
       display: flex;
       flex-direction: column;
@@ -55,8 +54,15 @@
       cursor: pointer;
       border-radius: 4px;
       z-index: 1100;
+      transition: transform 0.3s;
     }
-    .toggle-btn:hover { background-color: #333; }
+    .toggle-btn i {
+      transition: transform 0.3s;
+    }
+    .toggle-btn:hover i {
+      transform: rotate(180deg);
+    }
+    .toggle-btn.hidden { display: none; }
 
     /* Konten utama */
     .main-content {
@@ -155,7 +161,9 @@
 </head>
 <body>
   <!-- Toggle Sidebar -->
-  <button class="toggle-btn" onclick="toggleSidebar()">☰ Menu</button>
+  <button id="toggleBtn" class="toggle-btn" onclick="toggleSidebar()">
+    <i class="fas fa-arrow-right"></i>
+  </button>
 
   <!-- Sidebar -->
   <div id="sidebar" class="sidebar">
@@ -198,7 +206,14 @@
     let schedules = [];
 
     function toggleSidebar() {
-      document.getElementById("sidebar").classList.toggle("open");
+      const sidebar = document.getElementById("sidebar");
+      const toggleBtn = document.getElementById("toggleBtn");
+      sidebar.classList.toggle("open");
+      if (sidebar.classList.contains("open")) {
+        toggleBtn.classList.add("hidden"); // sembunyikan tombol saat sidebar terbuka
+      } else {
+        toggleBtn.classList.remove("hidden");
+      }
     }
 
     function showNotification(message, color="#2ecc71") {
@@ -235,15 +250,15 @@
     }
 
     function editSchedule(index) {
-      const newTime = prompt("Masukkan jam baru (format HH:MM)", schedules[index]);
-      if (newTime && /^[0-2][0-9]:[0-5][0-9]$/.test(newTime)) {
+      const newTime = prompt("Masukkan jam baru (format)");
+        if (newTime && /^[0-2][0-9]:[0-5][0-9]$/.test(newTime)) {
         schedules[index] = newTime;
         saveSchedules();
         updateScheduleList();
         showNotification("Jadwal diubah: " + newTime);
-              } else {
-          alert("Format jam salah! Gunakan format HH:MM");
-        }
+      } else {
+        alert("Format jam salah! Gunakan format HH:MM");
+      }
     }
 
     function updateScheduleList() {
