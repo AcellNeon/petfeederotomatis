@@ -9,7 +9,6 @@
       font-family: 'Segoe UI', Helvetica, sans-serif;
       margin: 0;
       height: 100vh;
-      /* Background gradient elegan & mewah */
       background: linear-gradient(135deg, #1f1c2c, #928dab, #2c3e50, #bdc3c7);
       background-size: 400% 400%;
       animation: gradientFlow 15s ease infinite;
@@ -127,7 +126,7 @@
     .rotate { animation: spin 0.6s linear; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* Jadwal lebih bagus */
+    /* Jadwal */
     #scheduleList { list-style: none; padding: 0; }
     #scheduleList li {
       font-size: 16px;
@@ -144,9 +143,8 @@
     }
     #scheduleList li:hover { transform: scale(1.05); }
     #scheduleList li i { margin-right: 10px; color: #f1c40f; }
-
-    .edit-btn { background: #3498db; }
-    .delete-btn { background: #e74c3c; }
+    .edit-btn { background: #3498db; color:white; margin-left:5px; padding:5px 10px; border:none; border-radius:6px; }
+    .delete-btn { background: #e74c3c; color:white; margin-left:5px; padding:5px 10px; border:none; border-radius:6px; }
 
     /* Notification */
     .notification {
@@ -172,9 +170,40 @@
       from { opacity: 0; transform: translateX(-20px); }
       to { opacity: 1; transform: translateX(0); }
     }
+
+    /* Account button */
+    .account-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 30px;
+      padding: 8px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1200;
+    }
+    .account-btn:hover { transform: scale(1.05); }
+    .account-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body>
+  <!-- Account Button -->
+  <div id="accountBtn" class="account-btn">
+    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User" class="account-icon">
+    <span id="accountInfo">Loading...</span>
+  </div>
+
   <!-- Toggle Sidebar -->
   <button id="toggleBtn" class="toggle-btn" onclick="toggleSidebar()">
     <i class="fas fa-bars"></i>
@@ -196,7 +225,7 @@
     </div>
   </div>
 
-  <!-- Settings Box -->
+    <!-- Settings Box -->
   <div class="settings-box" id="settingsBox">
     <button class="action-btn" onclick="setEnglish()">Switch to English</button>
     <button class="action-btn" onclick="setIndonesian()">Switch to Bahasa</button>
@@ -221,18 +250,36 @@
     </div>
 
     <div id="historySection" class="login-card" style="display:none;">
-            <h2 id="historyTitle">Riwayat</h2>
+      <h2 id="historyTitle">Riwayat</h2>
       <ul id="historyList"></ul>
-      <button id="clearHistoryBtn" class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
+      <button id="clearHistoryBtn" class="action-btn" onclick="clearHistory()">Hapus Riwayat</button>
     </div>
   </div>
 
-  <script>
+  <!-- Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
     const apiKey = "09LPP2CN0H8VL1I2";
     const talkbackID = "56041";
     let schedules = [];
     let history = [];
 
+    // Sidebar
     function toggleSidebar() {
       document.getElementById("sidebar").classList.add("open");
       document.getElementById("toggleBtn").classList.add("hidden");
@@ -246,16 +293,9 @@
       document.getElementById("dashboardSection").style.display = "none";
       document.getElementById("scheduleSection").style.display = "none";
       document.getElementById("historySection").style.display = "none";
-
-      if(section === "dashboard") {
-        document.getElementById("dashboardSection").style.display = "block";
-      }
-      if(section === "schedule") {
-        document.getElementById("scheduleSection").style.display = "block";
-      }
-      if(section === "history") {
-        document.getElementById("historySection").style.display = "block";
-      }
+      if(section === "dashboard") document.getElementById("dashboardSection").style.display = "block";
+      if(section === "schedule") document.getElementById("scheduleSection").style.display = "block";
+      if(section === "history") document.getElementById("historySection").style.display = "block";
       closeSidebar();
     }
 
@@ -267,7 +307,7 @@
       setTimeout(() => gear.classList.remove("rotate"), 600);
     }
 
-    // ====== LANGUAGE SWITCH ======
+    // Language
     function setEnglish() {
       document.getElementById("dashboardTitle").textContent = "Servo Control";
       document.getElementById("feedNowBtn").textContent = "Feed Now";
@@ -275,16 +315,13 @@
       document.getElementById("addScheduleBtn").textContent = "Add Schedule";
       document.getElementById("historyTitle").textContent = "History";
       document.getElementById("clearHistoryBtn").textContent = "Clear History";
-
       const links = document.querySelectorAll(".menu a");
       links[0].innerHTML = '<i class="fas fa-home"></i> Dashboard';
       links[1].innerHTML = '<i class="fas fa-calendar-alt"></i> Schedule';
       links[2].innerHTML = '<i class="fas fa-history"></i> History';
-
       showNotification("Language switched to English");
       document.getElementById("settingsBox").classList.remove("show");
     }
-
     function setIndonesian() {
       document.getElementById("dashboardTitle").textContent = "Kontrol Servo";
       document.getElementById("feedNowBtn").textContent = "Kasih Makan Sekarang";
@@ -292,23 +329,21 @@
       document.getElementById("addScheduleBtn").textContent = "Tambah Jadwal";
       document.getElementById("historyTitle").textContent = "Riwayat";
       document.getElementById("clearHistoryBtn").textContent = "Hapus Riwayat";
-
       const links = document.querySelectorAll(".menu a");
       links[0].innerHTML = '<i class="fas fa-home"></i> Dashboard';
       links[1].innerHTML = '<i class="fas fa-calendar-alt"></i> Jadwal';
       links[2].innerHTML = '<i class="fas fa-history"></i> Riwayat';
-
       showNotification("Bahasa diganti ke Indonesia");
       document.getElementById("settingsBox").classList.remove("show");
     }
 
-    // ====== CREDITS POPUP ======
+    // Credits
     function showCredits() {
-      alert("Automatic Pet Feeder\nWeb Developer: Gregorius Yura Lorenzo Saputra\nESP32 Developer: Muhammad Farhan Al Faiz, Ladya Mareta Syafarani\n3D Design: ⁠Asipattra Surya Andika\nDocumentation: Muhammad Zaky Arrafi\nVersion: 1.0.0");
+      alert("Automatic Pet Feeder\nWeb Developer: Gregorius Yura Lorenzo Saputra\nESP32 Developer: Muhammad Farhan Al Faiz, Ladya Mareta Syafarani\n3D Design: Asipattra Surya Andika\nDocumentation: Muhammad Zaky Arrafi\nVersion: 1.0.0");
       document.getElementById("settingsBox").classList.remove("show");
     }
 
-    // ====== NOTIFICATION ======
+    // Notification
     function showNotification(message, color="#2ecc71") {
       const notif = document.getElementById("notification");
       notif.textContent = message;
@@ -317,7 +352,7 @@
       setTimeout(() => notif.classList.remove("show"), 3000);
     }
 
-    // ====== HISTORY ======
+    // History
     function addHistory(action) {
       const now = new Date();
       const timestamp = now.toLocaleString();
@@ -325,7 +360,6 @@
       saveHistory();
       updateHistoryList();
     }
-
     function updateHistoryList() {
       const list = document.getElementById("historyList");
       list.innerHTML = "";
@@ -335,41 +369,27 @@
         list.appendChild(li);
       });
     }
-
     function clearHistory() {
       history = [];
       saveHistory();
       updateHistoryList();
       showNotification("Riwayat dibersihkan", "#e67e22");
     }
-
-    function saveHistory() {
-      localStorage.setItem("feedHistory", JSON.stringify(history));
-    }
-
+    function saveHistory() { localStorage.setItem("feedHistory", JSON.stringify(history)); }
     function loadHistory() {
       const saved = localStorage.getItem("feedHistory");
-      if (saved) {
-        history = JSON.parse(saved);
-        updateHistoryList();
-      }
+      if (saved) { history = JSON.parse(saved); updateHistoryList(); }
     }
 
-    // ====== COMMAND ======
+    // Command
     function sendCommand() {
       const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
       fetch(url, { method: "POST" })
-        .then(response => response.text())
-        .then(() => {
-          showNotification("Kasih makan sekarang berhasil!");
-          addHistory("Kasih makan manual");
-        })
-        .catch(() => {
-          showNotification("Perintah gagal dikirim!", "#e74c3c");
-        });
+        .then(() => { showNotification("Kasih makan sekarang berhasil!"); addHistory("Kasih makan manual"); })
+        .catch(() => { showNotification("Perintah gagal dikirim!", "#e74c3c"); });
     }
 
-    // ====== SCHEDULE ======
+    // Schedule
     function addSchedule() {
       const time = document.getElementById("feedTime").value;
       if (time && !schedules.includes(time)) {
@@ -379,14 +399,12 @@
         showNotification("Jadwal ditambahkan: " + time);
       }
     }
-
     function deleteSchedule(index) {
       schedules.splice(index, 1);
       saveSchedules();
       updateScheduleList();
       showNotification("Jadwal dihapus", "#e67e22");
     }
-
     function editSchedule(index) {
       const newTime = prompt("Masukkan jam baru (format HH:MM)", schedules[index]);
       if (newTime && /^[0-2][0-9]:[0-5][0-9]$/.test(newTime)) {
@@ -394,47 +412,37 @@
         saveSchedules();
         updateScheduleList();
         showNotification("Jadwal diubah: " + newTime);
-      } else {
-        alert("Format jam salah! Gunakan format HH:MM");
-      }
+      } else { alert("Format jam salah! Gunakan format HH:MM"); }
     }
-
     function updateScheduleList() {
       const list = document.getElementById("scheduleList");
       list.innerHTML = "";
-      schedules.forEach((time, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<i class="fas fa-clock"></i> ${time}`;
+              schedules.forEach((time, index) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<i class="fas fa-clock"></i> ${time}`;
 
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.className = "edit-btn";
-        editBtn.onclick = () => editSchedule(index);
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Edit";
+          editBtn.className = "edit-btn";
+          editBtn.onclick = () => editSchedule(index);
 
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.className = "delete-btn";
-        delBtn.onclick = () => deleteSchedule(index);
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.className = "delete-btn";
+          delBtn.onclick = () => deleteSchedule(index);
 
-        li.appendChild(editBtn);
-        li.appendChild(delBtn);
-        list.appendChild(li);
-      });
-    }
-
-    function saveSchedules() {
-      localStorage.setItem("feedSchedules", JSON.stringify(schedules));
-    }
-
+          li.appendChild(editBtn);
+          li.appendChild(delBtn);
+          list.appendChild(li);
+        });
+      }
+    function saveSchedules() { localStorage.setItem("feedSchedules", JSON.stringify(schedules)); }
     function loadSchedules() {
       const saved = localStorage.getItem("feedSchedules");
-      if (saved) {
-        schedules = JSON.parse(saved);
-        updateScheduleList();
-      }
+      if (saved) { schedules = JSON.parse(saved); updateScheduleList(); }
     }
 
-    // ====== AUTO FEED ======
+    // Auto Feed setiap menit cek jadwal
     setInterval(() => {
       const now = new Date();
       const currentTime = now.toTimeString().slice(0,5); // format HH:MM
@@ -445,24 +453,38 @@
       }
     }, 60000);
 
-    // ====== LOGOUT ======
+    // Logout
     function logout() {
       const card = document.getElementById("dashboardSection");
-      if(card){
-        card.classList.add("fade-out");
-      }
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 600);
+      if(card){ card.classList.add("fade-out"); }
+      setTimeout(() => { window.location.href = "index.html"; }, 600);
     }
 
-    // ====== ONLOAD ======
+    // ====== Account Info dari Firebase ======
+    function loadAccountInfo() {
+      const userRef = ref(db, "users/currentUser"); // contoh node
+      get(userRef).then(snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const username = data.username || "Anon";
+          const type = data.type || "User";
+          document.getElementById("accountInfo").textContent = `${username} (${type})`;
+        } else {
+          document.getElementById("accountInfo").textContent = "Guest";
+        }
+      }).catch(err => {
+        console.error(err);
+        document.getElementById("accountInfo").textContent = "Error";
+      });
+    }
+
+    // Onload
     window.onload = () => {
       loadSchedules();
       loadHistory();
-      showSection("dashboard"); // default tampilkan dashboard
+      showSection("dashboard"); // default dashboard
+      loadAccountInfo();        // tampilkan info akun
     };
   </script>
 </body>
 </html>
-
