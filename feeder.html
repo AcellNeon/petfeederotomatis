@@ -9,7 +9,7 @@
       font-family: 'Segoe UI', Helvetica, sans-serif;
       margin: 0;
       height: 100vh;
-      background: url('anjaiu.JPG') no-repeat center center/cover;
+      background: url('anjai.jpg') no-repeat center center/cover;
       animation: fadeBg 1.2s ease forwards;
     }
 
@@ -95,41 +95,30 @@
     }
     .action-btn:hover { transform: scale(1.05); }
 
-    /* Jadwal otomatis */
-    #scheduleSection { display: none; text-align: center; }
-    #scheduleList li {
-      font-family: 'Courier New', monospace;
-      font-size: 18px;
-      background: linear-gradient(135deg, #1abc9c, #16a085);
-      color: #fff;
-      padding: 10px 15px;
-      margin: 8px 0;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    #scheduleList button {
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      margin-left: 6px;
-      cursor: pointer;
-      border: none;
-      color: #fff;
-    }
-    .edit-btn { background: #3498db; }
-    .delete-btn { background: #e74c3c; }
-
-    /* Riwayat */
-    #historySection { display: none; text-align: left; }
-    #historyList li {
-      background: rgba(255,255,255,0.2);
+    /* Settings box */
+    .settings-box {
+      position: fixed;
+      bottom: 80px;
+      left: 270px;
+      background: rgba(0,0,0,0.9);
       color: white;
-      padding: 8px 12px;
-      margin: 6px 0;
-      border-radius: 6px;
+      padding: 15px;
+      border-radius: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      animation: slideIn 0.4s ease forwards;
+    }
+    .settings-box.show { display: flex; }
+
+    /* Gear animation */
+    .rotate {
+      animation: spin 0.6s linear;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     /* Notification */
@@ -156,6 +145,10 @@
       from { filter: brightness(0.5); }
       to { filter: brightness(1); }
     }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
   </style>
 </head>
 <body>
@@ -172,9 +165,18 @@
       <a href="#" onclick="showSection('history')">Riwayat</a>
     </div>
     <div class="bottom">
+      <a href="#" onclick="toggleSettings()">
+        <i id="gearIcon" class="fas fa-cog"></i> Settings
+      </a>
       <a href="#" onclick="logout()">Logout</a>
       <a href="#" onclick="closeSidebar()"><i class="fas fa-arrow-left"></i> Tutup</a>
     </div>
+  </div>
+
+  <!-- Settings Box -->
+  <div class="settings-box" id="settingsBox">
+    <button class="action-btn">Language</button>
+    <button class="action-btn">Credits</button>
   </div>
 
   <!-- Notification -->
@@ -189,7 +191,7 @@
     </div>
 
     <!-- Jadwal Section -->
-    <div id="scheduleSection" class="login-card">
+    <div id="scheduleSection" class="login-card" style="display:none;">
       <h2>Jadwal Otomatis</h2>
       <input type="time" id="feedTime">
       <button class="action-btn" onclick="addSchedule()">Tambah Jadwal</button>
@@ -197,7 +199,7 @@
     </div>
 
     <!-- History Section -->
-    <div id="historySection" class="login-card">
+    <div id="historySection" class="login-card" style="display:none;">
       <h2>Riwayat</h2>
       <ul id="historyList"></ul>
       <button class="action-btn" onclick="clearHistory()">Clear Riwayat</button>
@@ -236,14 +238,23 @@
       closeSidebar();
     }
 
+    function toggleSettings() {
+      const box = document.getElementById("settingsBox");
+      const gear = document.getElementById("gearIcon");
+      box.classList.toggle("show");
+      gear.classList.add("rotate");
+      setTimeout(() => gear.classList.remove("rotate"), 600);
+    }
+
     function showNotification(message, color="#2ecc71") {
-      const notif = document.getElementById("notification");
+            const notif = document.getElementById("notification");
       notif.textContent = message;
       notif.style.background = color;
       notif.classList.add("show");
-            setTimeout(() => notif.classList.remove("show"), 3000);
+      setTimeout(() => notif.classList.remove("show"), 3000);
     }
 
+    // ====== HISTORY ======
     function addHistory(action) {
       const now = new Date();
       const timestamp = now.toLocaleString();
@@ -281,6 +292,7 @@
       }
     }
 
+    // ====== COMMAND ======
     function sendCommand() {
       const url = `https://api.thingspeak.com/talkbacks/${talkbackID}/commands?api_key=${apiKey}&command_string=RUN`;
       fetch(url, { method: "POST" })
@@ -294,6 +306,7 @@
         });
     }
 
+    // ====== SCHEDULE ======
     function addSchedule() {
       const time = document.getElementById("feedTime").value;
       if (time && !schedules.includes(time)) {
@@ -358,7 +371,7 @@
       }
     }
 
-    // Kasih makan otomatis setiap menit
+    // ====== AUTO FEED ======
     setInterval(() => {
       const now = new Date();
       const currentTime = now.toTimeString().slice(0,5); // format HH:MM
@@ -369,6 +382,7 @@
       }
     }, 60000);
 
+    // ====== LOGOUT ======
     function logout() {
       const card = document.getElementById("dashboardSection");
       if(card){
@@ -379,6 +393,7 @@
       }, 600);
     }
 
+    // ====== ONLOAD ======
     window.onload = () => {
       loadSchedules();
       loadHistory();
