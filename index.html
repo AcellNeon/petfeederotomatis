@@ -19,31 +19,28 @@
       background: url('anjai.jpg') no-repeat center center/cover;
       animation: fadeBg 1.2s ease forwards;
     }
-
     .container {
       background: rgba(255,255,255,0.1);
       backdrop-filter: blur(10px);
       border-radius: 15px;
       padding: 30px;
-      width: 360px;
+      width: 340px;
       text-align: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
       opacity: 0;
       transform: translateY(30px);
       animation: fadeSlideIn 0.8s ease forwards;
     }
-
     h1, h2 {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       font-size: 24px;
       color: white;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
     }
-
-    input, select {
+    input {
       padding: 12px;
       margin: 8px 0;
-      width: 92%;
+      width: 90%;
       font-size: 16px;
       border: none;
       border-radius: 8px;
@@ -54,8 +51,7 @@
       transition: background 0.3s;
     }
     input::placeholder { color: #ddd; }
-    input:focus, select:focus { background: rgba(255,255,255,0.3); }
-
+    input:focus { background: rgba(255,255,255,0.3); }
     button {
       padding: 12px 20px;
       font-size: 16px;
@@ -77,38 +73,14 @@
       transform: scale(0.95);
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
-
-    .link-btn {
-      background: none;
-      color: #ffb3b3;
-      font-size: 14px;
-      margin-top: 10px;
-      text-decoration: underline;
-      cursor: pointer;
-      border: none;
-    }
-
-    #status {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #ff8080;
-      min-height: 20px;
-    }
-
+    #status { margin-top: 10px; font-weight: bold; color: #ff8080; }
     @keyframes fadeSlideIn {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
     @keyframes fadeBg {
-      from { filter: brightness(0.6); }
+      from { filter: brightness(0.5); }
       to { filter: brightness(1); }
-    }
-
-    @media (max-width: 480px) {
-      .container { width: 92%; padding: 22px; }
-      h1, h2 { font-size: 20px; }
-      input, select { width: 100%; font-size: 14px; }
-      button { font-size: 14px; }
     }
   </style>
 </head>
@@ -116,34 +88,28 @@
   <div class="container">
     <h1>Automatic Pet Feeder</h1>
 
-    <!-- Register -->
-    <div id="setPinDiv">
-      <h2>Register</h2>
-      <input type="text" id="newUsername" placeholder="Username">
-      <input type="password" id="newPin" maxlength="4" placeholder="4 digit PIN">
-      <select id="newRole">
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-      </select>
-      <button onclick="register()">Simpan Akun</button>
-      <button class="link-btn" onclick="goToLogin()">Sudah punya akun? Login</button>
+    <!-- Login -->
+    <div id="loginDiv">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Username"><br>
+      <input type="password" id="pin" maxlength="4" placeholder="4 digit pin"><br>
+      <button onclick="checkPin()">Login</button>
       <p id="status"></p>
+      <button onclick="showRegister()">Belum punya akun? Register</button>
     </div>
 
-    <!-- Login -->
-    <div id="loginDiv" style="display:none;">
-      <h2>Login</h2>
-      <input type="text" id="username" placeholder="Username">
-      <input type="password" id="pin" maxlength="4" placeholder="4 digit PIN">
-      <button onclick="login()">Login</button>
-      <button class="link-btn" onclick="forgotPin()">Lupa PIN? Reset</button>
-      <button class="link-btn" onclick="goToRegister()">Belum punya akun? Register</button>
-      <p id="statusLogin"></p>
+    <!-- Register -->
+    <div id="registerDiv" style="display:none;">
+      <h2>Register User</h2>
+      <input type="text" id="newUsername" placeholder="Username"><br>
+      <input type="password" id="newPin" maxlength="4" placeholder="4 digit pin"><br>
+      <button onclick="registerUser()">Register</button>
+      <p id="statusRegister"></p>
+      <button onclick="showLogin()">Sudah punya akun? Login</button>
     </div>
   </div>
 
   <script>
-    // Config Firebase milikmu
     const firebaseConfig = {
       apiKey: "AIzaSyA-sLBXum9oj1mpDp7rPn4--q3LCBQtMnI",
       authDomain: "loginpage-e42a7.firebaseapp.com",
@@ -153,153 +119,77 @@
       messagingSenderId: "535312484754",
       appId: "1:535312484754:web:273829b9dff1ae9715594b"
     };
-
-    // Inisialisasi Firebase (compat)
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Util: generate salt hex 16 byte
-    function generateSaltHex(bytes = 16) {
-      const arr = new Uint8Array(bytes);
-      crypto.getRandomValues(arr);
-      return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // Util: hash SHA-256 dari (PIN + saltHex), hasil hex
-    async function hashPinWithSalt(pin, saltHex) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(pin + saltHex);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
-    }
-
-    // Navigasi sederhana
-    function goToLogin() {
-      document.getElementById('setPinDiv').style.display = 'none';
-      document.getElementById('loginDiv').style.display = 'block';
-      document.getElementById('status').textContent = '';
-    }
-    function goToRegister() {
-      document.getElementById('loginDiv').style.display = 'none';
-      document.getElementById('setPinDiv').style.display = 'block';
-      document.getElementById('statusLogin').textContent = '';
-    }
-
-    // Register user baru: simpan username, salt, hashedPin, role
-    async function register() {
-      const username = document.getElementById('newUsername').value.trim();
-      const pin = document.getElementById('newPin').value.trim();
-      const role = document.getElementById('newRole').value;
-
-      const statusEl = document.getElementById('status');
-      statusEl.textContent = '';
-
-      if (!username || !pin || pin.length !== 4) {
-        statusEl.textContent = 'Isi username dan PIN 4 digit.';
-        return;
-      }
-
-      try {
-        // Cek apakah user sudah ada
-        const snap = await db.ref('users/' + username).get();
-        if (snap.exists()) {
-          statusEl.textContent = 'Username sudah dipakai.';
-          return;
-        }
-
-        const saltHex = generateSaltHex(16);
-        const hashedPin = await hashPinWithSalt(pin, saltHex);
-
-        await db.ref('users/' + username).set({
-          salt: saltHex,
-          hashedPin: hashedPin,
-          role: role,
+    // Buat akun admin default
+    async function createAdminAccount() {
+      const adminUser = "acellneon";
+      const adminPin = "0110";
+      const snap = await db.ref("users/" + adminUser).get();
+      if (!snap.exists()) {
+        await db.ref("users/" + adminUser).set({
+          pin: adminPin,
+          role: "admin",
           createdAt: Date.now()
         });
-
-        statusEl.textContent = 'Registrasi berhasil. Silakan login.';
-        // Pindah ke login
-        setTimeout(() => goToLogin(), 600);
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = 'Terjadi error saat registrasi.';
       }
     }
+    createAdminAccount();
 
-    // Login: ambil user, hash PIN input dengan salt yang tersimpan, bandingkan
-    async function login() {
-      const username = document.getElementById('username').value.trim();
-      const pin = document.getElementById('pin').value.trim();
-      const statusEl = document.getElementById('statusLogin');
-      statusEl.textContent = '';
-
-      if (!username || !pin || pin.length !== 4) {
-        statusEl.textContent = 'Isi username dan PIN 4 digit.';
-        return;
-      }
-
-      try {
-        const snap = await db.ref('users/' + username).get();
-        if (!snap.exists()) {
-          statusEl.textContent = 'Username tidak ditemukan.';
-          return;
-        }
-
-        const { salt, hashedPin, role } = snap.val();
-        const inputHash = await hashPinWithSalt(pin, salt);
-
-        if (inputHash === hashedPin) {
-          // Simpan session sederhana
-          localStorage.setItem('currentUser', username);
-          localStorage.setItem('currentRole', role);
-          // Redirect ke feeder
-          window.location.href = 'feeder.html';
+    // Login
+    function checkPin() {
+      const username = document.getElementById("username").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      db.ref("users/" + username).get().then(snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          if (pin === data.pin) {
+            localStorage.setItem("currentUser", username);
+            localStorage.setItem("currentRole", data.role);
+            window.location.href = "feeder.html";
+          } else {
+            document.getElementById("status").innerText = "PIN salah!";
+          }
         } else {
-          statusEl.textContent = 'PIN salah.';
+          document.getElementById("status").innerText = "Username tidak ditemukan!";
         }
-      } catch (err) {
+      }).catch(err => {
+        document.getElementById("status").innerText = "Terjadi error koneksi.";
         console.error(err);
-        statusEl.textContent = 'Terjadi error saat login.';
-      }
+      });
     }
 
-    // Reset PIN user (hapus data user)
-    async function forgotPin() {
-      const username = document.getElementById('username').value.trim();
-      const statusEl = document.getElementById('statusLogin');
-      statusEl.textContent = '';
-
-      if (!username) {
-        statusEl.textContent = 'Masukkan username untuk reset.';
+    // Register user biasa
+    async function registerUser() {
+      const username = document.getElementById("newUsername").value.trim();
+      const pin = document.getElementById("newPin").value.trim();
+      if (!username || pin.length !== 4) {
+        document.getElementById("statusRegister").innerText = "Isi username dan PIN 4 digit.";
         return;
       }
-
-      try {
-        const snap = await db.ref('users/' + username).get();
-        if (!snap.exists()) {
-          statusEl.textContent = 'Username tidak ditemukan.';
-          return;
-        }
-        await db.ref('users/' + username).remove();
-        statusEl.textContent = 'Akun direset. Silakan register ulang.';
-        // Tampilkan form register
-        setTimeout(() => goToRegister(), 600);
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = 'Terjadi error saat reset.';
+      const snap = await db.ref("users/" + username).get();
+      if (snap.exists()) {
+        document.getElementById("statusRegister").innerText = "Username sudah dipakai.";
+        return;
       }
+      await db.ref("users/" + username).set({
+        pin: pin,
+        role: "user",
+        createdAt: Date.now()
+      });
+      document.getElementById("statusRegister").innerText = "Registrasi berhasil. Silakan login.";
     }
 
-    // Jika sebelumnya sudah login, bisa langsung redirect (opsional)
-    (function autoRedirectIfLoggedIn() {
-      const u = localStorage.getItem('currentUser');
-      if (u) {
-        // Misal tetap minta login ulang untuk keamanan, atau:
-        // window.location.href = 'feeder.html';
-      }
-    })();
+    // Toggle tampilan
+    function showRegister() {
+      document.getElementById("loginDiv").style.display = "none";
+      document.getElementById("registerDiv").style.display = "block";
+    }
+    function showLogin() {
+      document.getElementById("registerDiv").style.display = "none";
+      document.getElementById("loginDiv").style.display = "block";
+    }
   </script>
 </body>
 </html>
